@@ -1,4 +1,4 @@
-package com.example.android.popularmovies;
+package com.tomar.udacity.popularmovies;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.android.popularmovies", appContext.getPackageName());
+        assertEquals("com.tomar.udacity.popularmovies", appContext.getPackageName());
     }
 }

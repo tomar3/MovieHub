@@ -1,4 +1,4 @@
-package com.example.android.popularmovies;
+package com.tomar.udacity.popularmovies;
 
 import org.junit.Test;
 

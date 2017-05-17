@@ -1,3 +1,17 @@
 <resources>
-    <string name="app_name">Popular Movies</string>
+    <string name="app_name">PopularMovies</string>
+
+
+    <!--XML Attributes-->
+    <string name="network_error">Network error. Please try again.</string>
+    <string name="thumbnail_content">Movie Thumbnail</string>
+
+    <!--Activity Titles-->
+    <string name="main_title_pop">Popular Movies</string>
+    <string name="main_title_top">Top Rated Movies</string>
+    <string name="movie_detail_title">Movie Detail</string>
+
+    <!--Menu titles-->
+    <string name="sortBy1">"Sort by most popular"</string>
+    <string name="sortBy2">Sort by top rated</string>
 </resources>
