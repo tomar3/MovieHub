@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.tomar.udacity.popularmovies.tasks.MovieQueryTask;
 import com.tomar.udacity.popularmovies.utilities.NetworkUtils;
 
 import org.json.JSONArray;
@@ -21,16 +23,15 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements MovieGridAdapter.GridItemClickListener{
+public class MainActivity extends AppCompatActivity implements MovieGridAdapter.GridItemClickListener,
+        MovieQueryTask.OnMovieQueryExecuteListener{
+
     private static int NUMBER_OF_COLUMNS = 2;
     private static String TOP_RATED = "Top Rated";
     private static String POPULAR = "Popular";
     private static String SORT_TYPE = "sortType";
     private static String SCROLL_POSITION = "scrollPosition";
-    static String TITLE = "title";
-    static String YEAR = "year";
-    static String DESCR = "descr";
-    static String RATING = "rating";
+    static String MOVIE_INFO = "movieInfo";
     static String PHOTO_URL = "photoUrl";
 
     private Handler handler = new Handler();
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements MovieGridAdapter.
         URL movieSearchUrl = NetworkUtils.buildSearchUrl(movieBaseUrl);
 
         //Fire off a AsyncTask to execute the http request
-        new MovieQueryTask().execute(movieSearchUrl);
+        new MovieQueryTask(this).execute(movieSearchUrl);
     }
 
     private void displayResults(boolean success){
@@ -226,69 +227,44 @@ public class MainActivity extends AppCompatActivity implements MovieGridAdapter.
     public void onGridItemClick(int position){
 
         //Start detail activity and pass it information about the chosen movie
-        Intent detailIntent = new Intent(MainActivity.this, MovieDetail.class);
+        Intent detailIntent = new Intent(MainActivity.this, MovieDetailActivity.class);
 
         MovieInfo chosenMovieInfo = mMovieInfos.get(position);
 
-        detailIntent.putExtra(TITLE, chosenMovieInfo.title);
-        detailIntent.putExtra(YEAR, chosenMovieInfo.year);
-        detailIntent.putExtra(RATING, chosenMovieInfo.rating);
-        detailIntent.putExtra(DESCR, chosenMovieInfo.descr);
         detailIntent.putExtra(PHOTO_URL, mMovieUrls.get(position));
+        detailIntent.putExtra(MOVIE_INFO, chosenMovieInfo);
 
         startActivity(detailIntent);
     }
 
+    @Override
+    public void onMovieQueryPreExecute(){
+        mLoadingIndicator.setVisibility(View.VISIBLE);
+    }
 
+    @Override
+    public void onMovieQueryPostExecute(String movieSearchResults){
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
 
-    //ASyncTask to query the movie api
-    private class MovieQueryTask extends AsyncTask<URL, Void, String> {
+        //If http request gave back results, display them
+        if (movieSearchResults != null && !movieSearchResults.equals("")) {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mLoadingIndicator.setVisibility(View.VISIBLE);
-        }
+            displayResults(true);
 
-        @Override
-        protected String doInBackground(URL... params) {
-            //Execute http request on the given url
-            URL movieSearchUrl = params[0];
-            String movieSearchResults = null;
             try {
-                movieSearchResults = NetworkUtils.getResponseFromHttpUrl(movieSearchUrl);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return movieSearchResults;
-        }
 
-        @Override
-        protected void onPostExecute(String movieSearchResults) {
+                //Load the movie information from the returned JSON object
+                JSONObject movieJsonResult = new JSONObject(movieSearchResults);
+                loadMovieUrls(movieJsonResult);
 
-            mLoadingIndicator.setVisibility(View.INVISIBLE);
-
-            //If http request gave back results, display them
-            if (movieSearchResults != null && !movieSearchResults.equals("")) {
-
-                displayResults(true);
-
-                try {
-
-                    //Load the movie information from the returned JSON object
-                    JSONObject movieJsonResult = new JSONObject(movieSearchResults);
-                    loadMovieUrls(movieJsonResult);
-
-                } catch (Throwable t) {
-                    Log.e("MainActivity", "Bad JSON: "  + movieSearchResults );
-                    displayResults(false);
-                }
-            } else {
-
-                //Display network error message otherwise
+            } catch (Throwable t) {
+                Log.e("MainActivity", "Bad JSON: "  + movieSearchResults );
                 displayResults(false);
             }
-        }
+        } else {
 
+            //Display network error message otherwise
+            displayResults(false);
+        }
     }
 }

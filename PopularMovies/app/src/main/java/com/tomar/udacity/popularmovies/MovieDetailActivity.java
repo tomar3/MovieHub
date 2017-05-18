@@ -8,18 +8,25 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import static com.tomar.udacity.popularmovies.MainActivity.DESCR;
-import static com.tomar.udacity.popularmovies.MainActivity.PHOTO_URL;
-import static com.tomar.udacity.popularmovies.MainActivity.RATING;
-import static com.tomar.udacity.popularmovies.MainActivity.TITLE;
-import static com.tomar.udacity.popularmovies.MainActivity.YEAR;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-public class MovieDetail extends AppCompatActivity {
+import static com.tomar.udacity.popularmovies.MainActivity.MOVIE_INFO;
+import static com.tomar.udacity.popularmovies.MainActivity.PHOTO_URL;
+
+
+public class MovieDetailActivity extends AppCompatActivity {
+    @BindView(R.id.tv_year) TextView year;
+    @BindView(R.id.tv_movie_title) TextView title;
+    @BindView(R.id.tv_rating) TextView rating;
+    @BindView(R.id.tv_descr) TextView descr;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
+        ButterKnife.bind(this);
 
         //Retrieve the incoming intent
         Intent incomingIntent = getIntent();
@@ -32,22 +39,20 @@ public class MovieDetail extends AppCompatActivity {
             //Use Picasso to load the photo url
             Picasso.with(this)
                     .load(incomingIntent.getStringExtra(PHOTO_URL))
+                    .placeholder(R.drawable.placeholder_loading_image)
+                    .error(R.drawable.error_placeholder)
                     .fit()
                     .into(movieThumbnail);
 
             //Set the text views based on the passed data
-            TextView title = (TextView) findViewById(R.id.tv_movie_title);
-            title.setText(incomingIntent.getStringExtra(TITLE));
+            MovieInfo movieInfo = incomingIntent.getParcelableExtra(MOVIE_INFO);
 
-            TextView year = (TextView) findViewById(R.id.tv_year);
-            year.setText(incomingIntent.getStringExtra(YEAR));
+            title.setText(movieInfo.title);
+            year.setText(movieInfo.year);
 
-            TextView rating = (TextView) findViewById(R.id.tv_rating);
-            String ratingConcat = incomingIntent.getStringExtra(RATING) + "/10";
+            String ratingConcat = movieInfo.rating + "/10";
             rating.setText(ratingConcat);
-
-            TextView descr = (TextView) findViewById(R.id.tv_descr);
-            descr.setText(incomingIntent.getStringExtra(DESCR));
+            descr.setText(movieInfo.descr);
 
 
         }else{

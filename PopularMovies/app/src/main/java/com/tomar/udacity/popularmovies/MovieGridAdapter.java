@@ -46,6 +46,8 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.Movi
         //Use Picasso to load the movie poster from the url based on the position
         Picasso.with(mContext)
                 .load(mMovieUrls.get(position))
+                .placeholder(R.drawable.placeholder_loading_image)
+                .error(R.drawable.error_placeholder)
                 .fit()
                 .into(holder.mMoviePoster);
     }
