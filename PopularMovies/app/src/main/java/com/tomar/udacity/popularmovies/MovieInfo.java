@@ -4,13 +4,14 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class MovieInfo implements Parcelable {
-    String title, rating, year, descr;
+    String title, rating, year, descr, movieId;
 
-    public MovieInfo(String title, String rating, String date, String descr ) {
+    public MovieInfo(String title, String rating, String date, String descr, String movieId) {
         this.title = title;
         this.rating = rating;
         this.year = date.split("-")[0];
         this.descr = descr;
+        this.movieId = movieId;
     }
 
     @Override
@@ -24,6 +25,7 @@ public class MovieInfo implements Parcelable {
         dest.writeString(this.rating);
         dest.writeString(this.year);
         dest.writeString(this.descr);
+        dest.writeString(this.movieId);
     }
 
     protected MovieInfo(Parcel in) {
@@ -31,6 +33,7 @@ public class MovieInfo implements Parcelable {
         this.rating = in.readString();
         this.year = in.readString();
         this.descr = in.readString();
+        this.movieId = in.readString();
     }
 
     public static final Parcelable.Creator<MovieInfo> CREATOR = new Parcelable.Creator<MovieInfo>() {

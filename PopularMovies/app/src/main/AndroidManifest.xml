@@ -3,6 +3,7 @@
     package="com.tomar.udacity.popularmovies">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -21,7 +22,13 @@
         </activity>
         <activity android:name=".MovieDetailActivity"
             android:parentActivityName=".MainActivity"
-            android:label="@string/movie_detail_title"/>
+            android:label="@string/movie_detail_title"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <provider
+            android:name=".data.MovieContentProvider"
+            android:authorities="com.tomar.udacity.popularmovies"
+            android:exported="false"/>
     </application>
 
 </manifest>

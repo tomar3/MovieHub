@@ -1,13 +1,15 @@
-package com.tomar.udacity.popularmovies;
+package com.tomar.udacity.popularmovies.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
+import com.tomar.udacity.popularmovies.R;
 
 import java.util.ArrayList;
 
@@ -43,6 +45,8 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.Movi
 
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
+      //  Log.i("ABOUT TO LOAD", mMovieUrls.get(position));
+        Picasso.with(mContext).setLoggingEnabled(true);
         //Use Picasso to load the movie poster from the url based on the position
         Picasso.with(mContext)
                 .load(mMovieUrls.get(position))
