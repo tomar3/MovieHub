@@ -2,14 +2,14 @@ package com.tomar.udacity.popularmovies.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
 import com.squareup.picasso.Picasso;
+import com.tomar.udacity.popularmovies.GlideApp;
 import com.tomar.udacity.popularmovies.R;
+import com.tomar.udacity.popularmovies.model.Movie;
 
 import java.util.ArrayList;
 
@@ -17,17 +17,17 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.Movi
     final private GridItemClickListener mOnItemClickListener;
     private int mNumberOfItems;
     private Context mContext;
-    private ArrayList<String> mMovieUrls;
+    private ArrayList<Movie> mMovies;
 
     //Declare grid item click listener for this adapter
     public interface GridItemClickListener{
         public void onGridItemClick(int position);
     }
 
-    public MovieGridAdapter(int numberOfItems, ArrayList<String> movieUrls, Context context,
+    public MovieGridAdapter(int numberOfItems, ArrayList<Movie> movies, Context context,
                             GridItemClickListener gridItemClickListener){
         mNumberOfItems = numberOfItems;
-        mMovieUrls = movieUrls;
+        mMovies = movies;
 
         //Use main activity for the context and grid item click listener
         mContext = context;
@@ -45,15 +45,11 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.Movi
 
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
-      //  Log.i("ABOUT TO LOAD", mMovieUrls.get(position));
-        Picasso.with(mContext).setLoggingEnabled(true);
-        //Use Picasso to load the movie poster from the url based on the position
-        Picasso.with(mContext)
-                .load(mMovieUrls.get(position))
-                .placeholder(R.drawable.placeholder_loading_image)
-                .error(R.drawable.error_placeholder)
-                .fit()
-                .into(holder.mMoviePoster);
+            GlideApp.with(mContext)
+                    .load(mMovies.get(position).posterURL)
+                    .placeholder(R.drawable.loading_image)
+                    .error(R.drawable.error_placeholder)
+                    .into(holder.mMoviePoster);
     }
 
     @Override
@@ -62,10 +58,9 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.Movi
     }
 
     public void updateDataSet(){
-        mNumberOfItems = mMovieUrls.size();
+        mNumberOfItems = mMovies.size();
         this.notifyDataSetChanged();
     }
-
 
     //Define the View Holder for this adapter
     class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{

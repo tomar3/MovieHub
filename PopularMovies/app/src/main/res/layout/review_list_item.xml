@@ -21,21 +21,24 @@
             android:layout_marginRight="8dp"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/tv_author"
             android:fontFamily="sans-serif"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:textSize="14sp"
             android:textStyle="bold"
+            android:textColor="#D8000000"
+            android:layout_weight="1"
             tools:text="author123"/>
 
         <ImageView
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@drawable/ic_arrow_down"
+            android:src="@drawable/ic_expand_arrow"
             android:id="@+id/iv_expand_arrow"
-            />
+            android:tint="@color/colorPrimaryDark"
+            android:contentDescription="@string/expand_arrow_content" />
 
 
 

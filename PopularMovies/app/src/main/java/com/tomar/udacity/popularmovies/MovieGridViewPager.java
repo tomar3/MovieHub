@@ -6,14 +6,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.tomar.udacity.popularmovies.fragments.MoviesGridFragment;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.tomar.udacity.popularmovies.fragments.MoviesGridFragment.SORT_TYPE;
 
-//Ref: http://www.androidhive.info/2015/09/android-material-design-working-with-tabs/
 public class MovieGridViewPager extends FragmentPagerAdapter {
 
     private final List<Fragment> mFragmentList = new ArrayList<>();

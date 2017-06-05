@@ -13,17 +13,18 @@ import java.net.URL;
 
 import static com.tomar.udacity.popularmovies.MovieDetailActivity.MOVIE_ID_KEY;
 
-public class TrailerQueryLoader extends AsyncTaskLoader<String> {
+public class MovieDetailsQueryLoader extends AsyncTaskLoader<String> {
     private String movieId;
     private String mMovieDetailResults;
 
-    public TrailerQueryLoader(Context context, Bundle args){
+    public MovieDetailsQueryLoader(Context context, Bundle args){
         super(context);
         movieId = args.getString(MOVIE_ID_KEY);
     }
 
     @Override
     protected void onStartLoading() {
+        //Use cached results if previously loaded
         if (mMovieDetailResults == null) {
             forceLoad();
         }else {
@@ -35,6 +36,7 @@ public class TrailerQueryLoader extends AsyncTaskLoader<String> {
     @Override
     public String loadInBackground() {
         try {
+            //Query http url for movie detail json
             URL movieDetailQueryUrl = NetworkUtils.buildMovieDetailUrl(movieId);
             return NetworkUtils.getResponseFromHttpUrl(movieDetailQueryUrl);
 

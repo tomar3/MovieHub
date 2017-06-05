@@ -8,16 +8,12 @@
         android:id="@+id/rv_movies"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical" />
 
-    <TextView
-        android:id="@+id/tv_error_message"
-        android:textSize="22sp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="@string/network_error"
-        android:visibility="invisible" />
+    <include layout="@layout/empty_message_view"/>
+
+    <include layout="@layout/empty_favorites_message"
+        android:id="@+id/empty_favorites_view"/>
 
     <ProgressBar
         android:id="@+id/pb_loading_indicator"

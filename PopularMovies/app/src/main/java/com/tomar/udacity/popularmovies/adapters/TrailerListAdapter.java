@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.tomar.udacity.popularmovies.R;
+import com.tomar.udacity.popularmovies.model.Trailer;
 
 import java.util.ArrayList;
 
@@ -18,16 +19,19 @@ public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.
 
     final private ListItemClickListener mOnListItemClickListener;
     private int mNumberOfItems;
-    private ArrayList<String> mTrailerTitles;
+    private ArrayList<Trailer> mTrailers;
+    private TextView mEmptyTrailersView;
 
     //Declare list item click listener for this adapter
     public interface ListItemClickListener{
         public void onListItemClick(int position);
     }
 
-    public TrailerListAdapter(ArrayList<String> trailerTitles, ListItemClickListener listItemClickListener){
-        mNumberOfItems = trailerTitles.size();
-        mTrailerTitles = trailerTitles;
+    public TrailerListAdapter(ArrayList<Trailer> trailers, ListItemClickListener listItemClickListener,
+                              TextView emptyTrailersView){
+        mNumberOfItems = trailers.size();
+        mTrailers = trailers;
+        mEmptyTrailersView = emptyTrailersView;
 
         //Use detail activity for the list item click listener
         mOnListItemClickListener = listItemClickListener;
@@ -35,7 +39,7 @@ public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.
 
     @Override
     public TrailerViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType){
-        //Inflate the grid_item layout xml
+        //Inflate the trailer_list_item layout xml
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
         View itemView = inflater.inflate(R.layout.trailer_list_item, viewGroup, false);
 
@@ -44,20 +48,25 @@ public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.
 
     @Override
     public void onBindViewHolder(TrailerViewHolder holder, int position) {
-        holder.mTrailerTitle.setText(mTrailerTitles.get(position));
+        holder.mTrailerTitle.setText(mTrailers.get(position).title);
     }
 
     @Override
     public int getItemCount(){
+        //Show empty view if no trailers exist
+        if(mNumberOfItems > 0){
+            mEmptyTrailersView.setVisibility(View.GONE);
+        }else {
+            mEmptyTrailersView.setVisibility(View.VISIBLE);
+        }
         return mNumberOfItems;
     }
 
-    public void updateData(ArrayList<String> trailerTitles){
-        mTrailerTitles = trailerTitles;
-        mNumberOfItems = mTrailerTitles.size();
+    public void updateData(ArrayList<Trailer> trailerTitles){
+        mTrailers = trailerTitles;
+        mNumberOfItems = mTrailers.size();
         this.notifyDataSetChanged();
     }
-
 
 
     //Define the View Holder for this adapter
@@ -67,7 +76,6 @@ public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.
         public TrailerViewHolder(View itemView){
             super(itemView);
 
-            //View holder contains only one image view
             mTrailerTitle = (TextView) itemView.findViewById(R.id.tv_trailer_title);
 
             //Set this instance as the on click listener for the item view
@@ -76,10 +84,7 @@ public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.
 
         @Override
         public void onClick(View v){
-            //Call the on grid item click method, sending the position clicked
             mOnListItemClickListener.onListItemClick(getAdapterPosition());
         }
-
-
     }
 }

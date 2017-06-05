@@ -1,5 +1,8 @@
 package com.tomar.udacity.popularmovies.utilities;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.Log;
 
@@ -39,13 +42,13 @@ public class NetworkUtils {
     }
 
 
-    public static URL buildSearchUrl(String baseURL){
+    public static String buildSearchUrl(String baseURL){
         //Build the base url with the api key
         Uri builtUri = Uri.parse(baseURL).buildUpon()
                 .appendQueryParameter(PARAM_QUERY, BuildConfig.MOVIE_DB_API_KEY)
                 .build();
 
-        return convertToURL(builtUri.toString());
+        return builtUri.toString();
     }
 
     public static URL buildMovieDetailUrl(String movieId){
@@ -59,7 +62,7 @@ public class NetworkUtils {
     }
 
     public static String buildYouTubeUrl(String movieKey){
-        //Build the movie detail url with the api key and movie id
+        //Build the youtube video url with the trailer key
         Uri builtUri = Uri.parse(YOUTUBE_BASE_URL).buildUpon()
                 .appendQueryParameter(YOUTUBE_PARAM_QUERY, movieKey)
                 .build();
@@ -103,5 +106,12 @@ public class NetworkUtils {
 
     public static String getMovieSearchTopUrl() {
         return MOVIE_SEARCH_TOP_URL;
+    }
+
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

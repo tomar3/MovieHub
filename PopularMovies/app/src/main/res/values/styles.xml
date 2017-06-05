@@ -19,5 +19,11 @@
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textColorPrimaryInverse">@android:color/white</item>
     </style>
+    
+    <style name="text_header_style">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Small</item>
+        <item name="android:fontFamily">sans-serif-condensed-light</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 
 </resources>

@@ -12,22 +12,29 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.tomar.udacity.popularmovies.R;
+import com.tomar.udacity.popularmovies.model.Review;
 
 import java.util.ArrayList;
 
 public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.ReviewViewHolder>{
 
     private int mNumberOfItems;
-    private ArrayList<String> mReviews;
+    private ArrayList<Review> mReviews;
+    private TextView mEmptyReviewsView;
+    private ArrayList<Integer> mExpandedViewPositions;
 
-    public ReviewListAdapter(ArrayList<String> reviews){
+    public ReviewListAdapter(ArrayList<Review> reviews, TextView emptyReviewsView,
+                             ArrayList<Integer> expandedViewPositions){
+
         mNumberOfItems = reviews.size();
+        mExpandedViewPositions = expandedViewPositions;
         mReviews = reviews;
+        mEmptyReviewsView = emptyReviewsView;
     }
 
     @Override
     public ReviewViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType){
-        //Inflate the grid_item layout xml
+        //Inflate the review_list_item layout xml
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
         View itemView = inflater.inflate(R.layout.review_list_item, viewGroup, false);
 
@@ -36,9 +43,9 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
 
     @Override
     public void onBindViewHolder(final ReviewViewHolder holder, int position) {
-        String[] reviewInfo = mReviews.get(position).split("~#~");
-        String author = reviewInfo[0];
-        String content = reviewInfo[1];
+        final int itemPosition = position;
+        String author = mReviews.get(position).author;
+        String content = mReviews.get(position).content;
 
         holder.mReviewAuthor.setText(author);
         holder.mReviewContent.setText(content);
@@ -47,27 +54,43 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
             @Override
             public void run() {
 
+                //Hide the expand arrow if the text view is short
                 if(holder.mReviewContent.getLineCount() <= holder.mReviewContent.getMaxLines()){
                     holder.mExpandArrow.setVisibility(View.INVISIBLE);
                 }
+
+                //Restore expanded state if previously saved
+                if(mExpandedViewPositions.contains(itemPosition)){
+                    holder.expandTextView(true);
+                }
             }
         });
+
 
 
     }
 
     @Override
     public int getItemCount(){
+        //Display empty view if no reviews exist
+        if(mNumberOfItems > 0){
+            mEmptyReviewsView.setVisibility(View.GONE);
+        }else {
+            mEmptyReviewsView.setVisibility(View.VISIBLE);
+        }
+
         return mNumberOfItems;
     }
 
-    public void updateData(ArrayList<String> reviews){
+    public void updateData(ArrayList<Review> reviews){
         mReviews = reviews;
         mNumberOfItems = reviews.size();
         this.notifyDataSetChanged();
     }
 
-
+    public ArrayList<Integer> getExpandedViewPositions(){
+        return mExpandedViewPositions;
+    }
 
     //Define the View Holder for this adapter
     class ReviewViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -88,8 +111,24 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
 
         @Override
         public void onClick(View v) {
+            expandTextView(false);
+        }
+
+        private void expandTextView(boolean isRestoring){
             int maxLines = 3;
             int expandToLines = (mReviewContent.getMaxLines() == maxLines) ? mReviewContent.getLineCount(): maxLines;
+
+            //Update list of expanded view positions if not coming from a restore
+            if(!isRestoring){
+                if(expandToLines > maxLines){
+                    mExpandedViewPositions.add(getAdapterPosition());
+                }else{
+                    if(mExpandedViewPositions.contains(getAdapterPosition())){
+                        mExpandedViewPositions.remove((Integer)getAdapterPosition());
+                    }
+                }
+            }
+
 
             toggleExpandArrow();
             ObjectAnimator expandAnimation = ObjectAnimator.ofInt(mReviewContent, "maxLines", expandToLines);
