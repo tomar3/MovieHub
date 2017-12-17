@@ -134,7 +134,7 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
 
         private void toggleExpandArrow(){
             rotationAngle = rotationAngle == 0 ? 180 : 0;
-            mExpandArrow.animate().rotation(rotationAngle).setDuration(500).start();
+            mExpandArrow.animate().rotation(rotationAngle).setDuration(200).start();
 
         }
     }
