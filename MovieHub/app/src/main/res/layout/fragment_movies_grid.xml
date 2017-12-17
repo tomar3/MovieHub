@@ -1,0 +1,26 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.codertal.moviehub.fragments.MoviesGridFragment">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_movies"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" />
+
+    <include layout="@layout/empty_message_view"/>
+
+    <include layout="@layout/empty_favorites_message"
+        android:id="@+id/empty_favorites_view"/>
+
+    <ProgressBar
+        android:id="@+id/pb_loading_indicator"
+        android:layout_height="42dp"
+        android:layout_width="42dp"
+        android:layout_gravity="center"
+        android:visibility="invisible" />
+
+
+</FrameLayout>
