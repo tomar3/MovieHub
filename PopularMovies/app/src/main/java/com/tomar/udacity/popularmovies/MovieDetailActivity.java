@@ -430,6 +430,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
         String title;
 
         //Change text based on favorited status
+        //Change text based on favorited status
         if(mIsFavorited){
             title = getString(R.string.snackbar_favorited_title);
         }else {

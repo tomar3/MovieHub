@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import com.squareup.picasso.Picasso;
 import com.tomar.udacity.popularmovies.GlideApp;
 import com.tomar.udacity.popularmovies.R;
 import com.tomar.udacity.popularmovies.model.Movie;
