@@ -1,4 +1,4 @@
-package com.codertal.moviehub.fragments;
+package com.codertal.moviehub.features.movies;
 
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -33,13 +33,16 @@ import com.codertal.moviehub.utilities.NetworkUtils;
 import com.codertal.moviehub.utilities.QueryParseUtils;
 
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MoviesGridFragment extends Fragment implements MovieGridAdapter.GridItemClickListener,
+public class MoviesFragment extends Fragment implements MoviesContract.View,
+        MovieGridAdapter.GridItemClickListener,
         LoaderManager.LoaderCallbacks<String>,
         MovieFavoritesQueryHandler.OnMovieFavoriteQueryListener,
         MovieFavoritesContentObserver.OnFavoritesChangeObserver,
@@ -48,7 +51,7 @@ public class MoviesGridFragment extends Fragment implements MovieGridAdapter.Gri
     @BindView(R.id.tv_empty_view) TextView mErrorMessage;
     @BindView(R.id.empty_favorites_view) View mEmptyFavoritesMessage;
     @BindView(R.id.pb_loading_indicator) ProgressBar mLoadingIndicator;
-    @BindView(R.id.rv_movies) RecyclerView mMoviesGrid;
+    @BindView(R.id.rv_movies) RecyclerView mMoviesRecycler;
 
     private static final int MOVIE_FAV_QUERY = 20;
     public static final int MOVIES_POPULAR_SEARCH_LOADER = 10;
@@ -78,7 +81,7 @@ public class MoviesGridFragment extends Fragment implements MovieGridAdapter.Gri
     private MovieFavoritesContentObserver mFavoritesContentObserver;
     private NetworkChangeBroadcastReceiver mNetworkChangeBroadcastReceiver;
 
-    public MoviesGridFragment() {}
+    public MoviesFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -97,23 +100,7 @@ public class MoviesGridFragment extends Fragment implements MovieGridAdapter.Gri
         mLoadingIndicator.getIndeterminateDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
         mErrorMessage.setText(getString(R.string.network_error));
 
-        int numberOfColumns;
-        numberOfColumns = getContext().getResources().getInteger(R.integer.num_of_columns);
-
-        //Increase number of columns for landscape mode
-        if(getContext().getResources().getBoolean(R.bool.is_landscape)){
-            numberOfColumns ++;
-        }
-
-        //Create new grid layout manager and set it with the recycler view
-        mLayoutManager = new GridLayoutManager(getContext(), numberOfColumns);
-        mMoviesGrid.setLayoutManager(mLayoutManager);
-
-        mMoviesGrid.setHasFixedSize(true);
-
-        //Create and set the movie grid adapter
-        mMovieGridAdapter = new MovieGridAdapter(mMovies.size(), mMovies, getContext(), this);
-        mMoviesGrid.setAdapter(mMovieGridAdapter);
+        setUpMoviesRecycler();
 
         //If creating from a saved state retrieve scroll position
         final int scrollPosition;
@@ -132,7 +119,7 @@ public class MoviesGridFragment extends Fragment implements MovieGridAdapter.Gri
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mMoviesGrid.scrollToPosition(scrollPosition);
+                    mMoviesRecycler.scrollToPosition(scrollPosition);
                 }
             }, 200);
         }
@@ -152,6 +139,10 @@ public class MoviesGridFragment extends Fragment implements MovieGridAdapter.Gri
         }
     }
 
+    @Override
+    public void displayMovies(List<Movie> movies) {
+
+    }
 
     private void makeMovieSearchQuery(String filterType) {
 
@@ -186,7 +177,7 @@ public class MoviesGridFragment extends Fragment implements MovieGridAdapter.Gri
             //Check if connected to internet before attempting to load
             if(NetworkUtils.isNetworkAvailable(getContext())) {
                 getActivity().getSupportLoaderManager().restartLoader(MOVIES_SEARCH_LOADER, urlBundle,
-                        MoviesGridFragment.this);
+                        MoviesFragment.this);
             }else {
                 displayResults(false, NETWORK_ERROR);
             }
@@ -198,7 +189,7 @@ public class MoviesGridFragment extends Fragment implements MovieGridAdapter.Gri
         if(success){
             mErrorMessage.setVisibility(View.INVISIBLE);
             mEmptyFavoritesMessage.setVisibility(View.INVISIBLE);
-            mMoviesGrid.setVisibility(View.VISIBLE);
+            mMoviesRecycler.setVisibility(View.VISIBLE);
         }else{
             if(errorType.equals(NETWORK_ERROR)){
                 mErrorMessage.setVisibility(View.VISIBLE);
@@ -209,7 +200,7 @@ public class MoviesGridFragment extends Fragment implements MovieGridAdapter.Gri
                 mErrorMessage.setVisibility(View.INVISIBLE);
             }
 
-            mMoviesGrid.setVisibility(View.INVISIBLE);
+            mMoviesRecycler.setVisibility(View.INVISIBLE);
         }
 
     }
@@ -228,7 +219,7 @@ public class MoviesGridFragment extends Fragment implements MovieGridAdapter.Gri
         Intent detailIntent = new Intent(getContext(), MovieDetailActivity.class);
 
         Movie chosenMovie = mMovies.get(position);
-        detailIntent.putExtra(MOVIE_INFO, chosenMovie);
+        detailIntent.putExtra(MOVIE_INFO, Parcels.wrap(chosenMovie));
 
         startActivity(detailIntent);
 
@@ -309,7 +300,7 @@ public class MoviesGridFragment extends Fragment implements MovieGridAdapter.Gri
                 }
 
             } catch (Throwable t) {
-                Log.e("MoviesGridFragment", "Bad JSON: "  + movieSearchResults );
+                Log.e("MoviesFragment", "Bad JSON: "  + movieSearchResults );
                 displayResults(false, NETWORK_ERROR);
             }
         } else {
@@ -344,5 +335,25 @@ public class MoviesGridFragment extends Fragment implements MovieGridAdapter.Gri
     @Override
     public void onNetworkConnected() {
         makeMovieSearchQuery(mFilterType);
+    }
+
+    private void setUpMoviesRecycler() {
+        int numberOfColumns;
+        numberOfColumns = getContext().getResources().getInteger(R.integer.num_of_columns);
+
+        //Increase number of columns for landscape mode
+        if(getContext().getResources().getBoolean(R.bool.is_landscape)){
+            numberOfColumns ++;
+        }
+
+        //Create new grid layout manager and set it with the recycler view
+        mLayoutManager = new GridLayoutManager(getContext(), numberOfColumns);
+        mMoviesRecycler.setLayoutManager(mLayoutManager);
+
+        mMoviesRecycler.setHasFixedSize(true);
+
+        //Create and set the movie grid adapter
+        mMovieGridAdapter = new MovieGridAdapter(mMovies.size(), mMovies, getContext(), this);
+        mMoviesRecycler.setAdapter(mMovieGridAdapter);
     }
 }

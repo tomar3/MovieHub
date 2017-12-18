@@ -6,12 +6,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.codertal.moviehub.fragments.MoviesGridFragment;
+import com.codertal.moviehub.features.movies.MoviesFragment;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.codertal.moviehub.fragments.MoviesGridFragment.SORT_TYPE;
 
 public class MovieGridViewPager extends FragmentPagerAdapter {
 
@@ -34,7 +32,7 @@ public class MovieGridViewPager extends FragmentPagerAdapter {
 
     public void addFragment(Fragment fragment, String title) {
         Bundle sortBundle = new Bundle();
-        sortBundle.putString(MoviesGridFragment.SORT_TYPE, title);
+        sortBundle.putString(MoviesFragment.SORT_TYPE, title);
 
         fragment.setArguments(sortBundle);
         mFragmentList.add(fragment);

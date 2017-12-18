@@ -45,7 +45,7 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.Movi
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
             GlideApp.with(mContext)
-                    .load(mMovies.get(position).posterURL)
+                    .load(mMovies.get(position).getPosterURL())
                     .placeholder(R.drawable.loading_image)
                     .error(R.drawable.error_placeholder)
                     .into(holder.mMoviePoster);

@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static com.codertal.moviehub.fragments.MoviesGridFragment.MOVIES_SEARCH_URL_KEY;
+import static com.codertal.moviehub.features.movies.MoviesFragment.MOVIES_SEARCH_URL_KEY;
 
 public class MoviesQueryLoader extends AsyncTaskLoader<String> {
     private URL mMovieSearchURL;
