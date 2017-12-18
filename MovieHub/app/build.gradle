@@ -26,7 +26,10 @@ android {
 
     project.ext {
         butterknifeVersion = "8.8.1"
+        daggerVersion = "2.13"
+        dartVersion = "2.0.3"
         glideVersion = "4.4.0"
+        leakcanaryVersion = "1.5.4"
         supportLibraryVersion = "27.0.2"
     }
 }
@@ -49,4 +52,15 @@ dependencies {
 
     implementation "com.github.bumptech.glide:glide:$project.glideVersion"
     annotationProcessor "com.github.bumptech.glide:compiler:$project.glideVersion"
+
+    implementation "com.google.dagger:dagger:$project.daggerVersion"
+    annotationProcessor "com.google.dagger:dagger-compiler:$project.daggerVersion"
+
+    annotationProcessor "com.google.dagger:dagger-android-processor:$project.daggerVersion"
+    implementation "com.google.dagger:dagger-android-support:$project.daggerVersion"
+
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$project.leakcanaryVersion"
+    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$project.leakcanaryVersion"
+
+    implementation 'com.jakewharton.timber:timber:4.6.0'
 }
