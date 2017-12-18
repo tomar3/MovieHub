@@ -1,4 +1,4 @@
-package com.codertal.moviehub.model;
+package com.codertal.moviehub.data.trailers;
 
 public class Trailer {
     public String title, key;

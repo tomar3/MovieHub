@@ -2,10 +2,10 @@ package com.codertal.moviehub.utilities;
 
 import android.database.Cursor;
 
-import com.codertal.moviehub.data.MovieContract;
-import com.codertal.moviehub.model.Movie;
-import com.codertal.moviehub.model.Review;
-import com.codertal.moviehub.model.Trailer;
+import com.codertal.moviehub.data.movies.local.MovieContract;
+import com.codertal.moviehub.data.movies.Movie;
+import com.codertal.moviehub.data.reviews.Review;
+import com.codertal.moviehub.data.trailers.Trailer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

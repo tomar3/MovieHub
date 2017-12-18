@@ -1,4 +1,4 @@
-package com.codertal.moviehub.data;
+package com.codertal.moviehub.data.movies.local;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -9,8 +9,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-
-import static com.codertal.moviehub.data.MovieContract.MovieEntry.TABLE_NAME;
 
 
 public class MovieContentProvider extends ContentProvider {
@@ -49,7 +47,7 @@ public class MovieContentProvider extends ContentProvider {
         switch (match) {
             case MOVIES:
                 // Inserting values into movies table
-                long id = db.insert(TABLE_NAME, null, values);
+                long id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, values);
                 if ( id > 0 ) {
                     returnUri = ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI, id);
                 } else {
@@ -83,7 +81,7 @@ public class MovieContentProvider extends ContentProvider {
         switch (match) {
             //Query for the movies directory
             case MOVIES:
-                retCursor =  db.query(TABLE_NAME,
+                retCursor =  db.query(MovieContract.MovieEntry.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -118,7 +116,7 @@ public class MovieContentProvider extends ContentProvider {
             //Handle deleting a movie from the movies directory
             case MOVIES:
                 //Use selections/selectionArgs to filter for specific movie(s)
-                moviesDeleted = db.delete(TABLE_NAME, selection, selectionArgs);
+                moviesDeleted = db.delete(MovieContract.MovieEntry.TABLE_NAME, selection, selectionArgs);
                 break;
 
             default:

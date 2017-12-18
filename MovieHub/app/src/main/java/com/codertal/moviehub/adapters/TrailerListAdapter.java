@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.codertal.moviehub.R;
-import com.codertal.moviehub.model.Trailer;
+import com.codertal.moviehub.data.trailers.Trailer;
 
 import java.util.ArrayList;
 

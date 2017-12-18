@@ -1,4 +1,4 @@
-package com.codertal.moviehub.data;
+package com.codertal.moviehub.data.movies.local;
 
 import android.net.Uri;
 import android.provider.BaseColumns;

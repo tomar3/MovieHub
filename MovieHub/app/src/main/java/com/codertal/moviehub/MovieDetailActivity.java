@@ -34,11 +34,11 @@ import android.widget.Toast;
 
 import com.codertal.moviehub.adapters.ReviewListAdapter;
 import com.codertal.moviehub.adapters.TrailerListAdapter;
-import com.codertal.moviehub.data.MovieContract;
+import com.codertal.moviehub.data.movies.local.MovieContract;
 import com.codertal.moviehub.features.movies.MoviesFragment;
-import com.codertal.moviehub.model.Movie;
-import com.codertal.moviehub.model.Review;
-import com.codertal.moviehub.model.Trailer;
+import com.codertal.moviehub.data.movies.Movie;
+import com.codertal.moviehub.data.reviews.Review;
+import com.codertal.moviehub.data.trailers.Trailer;
 import com.codertal.moviehub.recievers.NetworkChangeBroadcastReceiver;
 import com.codertal.moviehub.tasks.MovieFavoritesQueryHandler;
 import com.codertal.moviehub.tasks.MovieDetailsQueryLoader;

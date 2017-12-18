@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.codertal.moviehub.model.Review;
+import com.codertal.moviehub.data.reviews.Review;
 import com.codertal.moviehub.R;
 
 import java.util.ArrayList;

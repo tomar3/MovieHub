@@ -1,6 +1,6 @@
 package com.codertal.moviehub.features.movies;
 
-import com.codertal.moviehub.model.Movie;
+import com.codertal.moviehub.data.movies.Movie;
 
 import java.util.List;
 

@@ -22,10 +22,10 @@ import android.widget.TextView;
 
 import com.codertal.moviehub.MovieDetailActivity;
 import com.codertal.moviehub.MovieFavoritesContentObserver;
-import com.codertal.moviehub.model.Movie;
+import com.codertal.moviehub.data.movies.Movie;
 import com.codertal.moviehub.R;
 import com.codertal.moviehub.adapters.MovieGridAdapter;
-import com.codertal.moviehub.data.MovieContract;
+import com.codertal.moviehub.data.movies.local.MovieContract;
 import com.codertal.moviehub.recievers.NetworkChangeBroadcastReceiver;
 import com.codertal.moviehub.tasks.MovieFavoritesQueryHandler;
 import com.codertal.moviehub.tasks.MoviesQueryLoader;

@@ -1,4 +1,4 @@
-package com.codertal.moviehub.model;
+package com.codertal.moviehub.data.movies;
 
 
 import org.parceler.Parcel;
