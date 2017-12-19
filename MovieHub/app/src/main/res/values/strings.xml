@@ -44,6 +44,7 @@
     <!--Empty View Labels-->
     <string name="empty_reviews">No reviews have been made</string>
     <string name="empty_trailers">No trailers are available</string>
+    <string name="empty_movies">No movies are available at this time</string>
 
     <!--Error Toast Labels-->
     <string name="no_trailers_toast">No trailers to share</string>

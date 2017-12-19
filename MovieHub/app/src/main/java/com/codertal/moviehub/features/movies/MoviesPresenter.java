@@ -4,12 +4,16 @@ import android.support.annotation.NonNull;
 
 import com.codertal.moviehub.data.movies.Movie;
 import com.codertal.moviehub.data.movies.MovieRepository;
+import com.codertal.moviehub.data.movies.MoviesResponse;
 
 import java.util.List;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
-public class MoviesPresenter implements MoviesContract.Presenter {
+public class MoviesPresenter extends MoviesContract.Presenter {
 
     @NonNull
     private MoviesContract.View mMoviesView;
@@ -24,22 +28,26 @@ public class MoviesPresenter implements MoviesContract.Presenter {
 
     @Override
     public void loadMovies() {
-        mMovieRepository.getPopularMovies(new DisposableSingleObserver<List<Movie>>() {
-            @Override
-            public void onSuccess(List<Movie> movies) {
-                //TODO: WHY DOES THIS GET CALLED MULTIPLE TIMES
-                // I THINK BECAUSE THE OTHER FRAGMENT TABS ARE CALLING THE SAME CODE
-                if(movies.isEmpty()){
+        mCompositeDisposable.add(mMovieRepository.getPopularMovies()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(MoviesResponse::getResults)
+                .subscribeWith(new DisposableSingleObserver<List<Movie>>() {
+                    @Override
+                    public void onSuccess(List<Movie> movies) {
+                        if(movies.isEmpty()){
+                            mMoviesView.displayEmptyMovies();
+                        }else {
+                            mMoviesView.displayMovies(movies);
+                        }
+                    }
 
-                }else {
-                    mMoviesView.displayMovies(movies);
-                }
-            }
+                    @Override
+                    public void onError(Throwable error) {
+                        Timber.e(error);
 
-            @Override
-            public void onError(Throwable e) {
-
-            }
-        });
+                        mMoviesView.displayLoadingError();
+                    }
+                }));
     }
 }

@@ -73,14 +73,15 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     private static final String SCROLL_POSITION = "scrollPosition";
     public static final String MOVIE_INFO = "movieInfo";
 
-    private static final String NETWORK_ERROR = "networkError";
-    private static final String EMPTY_FAVORITES = "emptyFavorites";
-    private static final String NO_ERROR = "noError";
+    private static final String NETWORK_ERROR = "NETWORK_ERROR";
+    private static final String EMPTY_FAVORITES = "EMPTY_FAVORITES";
+    private static final String EMPTY_MOVIES = "EMPTY_MOVIES";
+    private static final String NO_ERROR = "NO_ERROR";
 
     private Handler handler = new Handler();
 
     private MovieGridAdapter mMovieGridAdapter;
-    private ArrayList<Movie> mMovies;
+
     private String mFilterType;
     private GridLayoutManager mLayoutManager;
 
@@ -102,7 +103,6 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPresenter = new MoviesPresenter(this, mMovieRepository);
-        mMovies = new ArrayList<>();
     }
 
 
@@ -148,18 +148,31 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     }
 
     @Override
-    public void onDestroy(){
-        super.onDestroy();
-        if(mFilterType.equals(FAVORITES)){
-            getContext().getContentResolver().unregisterContentObserver(mFavoritesContentObserver);
-        }
+    public void onDestroyView() {
+        super.onDestroyView();
+        mPresenter.unsubscribe();
+        //TODO: Uncomment when implemented favorites tab
+//        if(mFilterType.equals(FAVORITES)){
+//            getContext().getContentResolver().unregisterContentObserver(mFavoritesContentObserver);
+//        }
+    }
+
+    @Override
+    public void displayEmptyMovies() {
+        mErrorMessage.setText(getString(R.string.empty_movies));
+        displayResults(false, EMPTY_MOVIES);
     }
 
     @Override
     public void displayMovies(List<Movie> movies) {
-        showLoadingIndicator(false);
         mMovieGridAdapter.updateData(movies);
-        displayResults(true, "");
+        displayResults(true, NO_ERROR);
+    }
+
+    @Override
+    public void displayLoadingError() {
+        mErrorMessage.setText(getString(R.string.network_error));
+        displayResults(false, NETWORK_ERROR);
     }
 
     private void makeMovieSearchQuery(String filterType) {
@@ -207,12 +220,14 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
 
     private void displayResults(boolean success, String errorType){
         //Display error view or movie grid based on success status of http request or network check
+        showLoadingIndicator(false);
         if(success){
             mErrorMessage.setVisibility(View.INVISIBLE);
             mEmptyFavoritesMessage.setVisibility(View.INVISIBLE);
             mMoviesRecycler.setVisibility(View.VISIBLE);
         }else{
-            if(errorType.equals(NETWORK_ERROR)){
+
+            if(errorType.equals(NETWORK_ERROR) || errorType.equals(EMPTY_MOVIES)){
                 mErrorMessage.setVisibility(View.VISIBLE);
                 mEmptyFavoritesMessage.setVisibility(View.INVISIBLE);
 
@@ -249,14 +264,14 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     @Override
     public void onMovieFavoriteQueryComplete(int token, Object cookie, Cursor cursor) {
 
-        mMovies.clear();
+        //mMovies.clear();
 
         //Parse favorites query result and display results if successful
-        if(QueryParseUtils.parseMovieFavoriteQuery(cursor, mMovies)){
-            displayResults(true, NO_ERROR);
-        }else {
-            displayResults(false, EMPTY_FAVORITES);
-        }
+//        if(QueryParseUtils.parseMovieFavoriteQuery(cursor, mMovies)){
+//            displayResults(true, NO_ERROR);
+//        }else {
+//            displayResults(false, EMPTY_FAVORITES);
+//        }
 
         cursor.close();
         mMovieGridAdapter.updateDataSet();
@@ -312,7 +327,7 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
 
                 //Load the movie information from the returned JSON object
                 JSONObject movieJsonResult = new JSONObject(movieSearchResults);
-                mMovies.clear();
+               // mMovies.clear();
 
 //                //Parse, if success update adapter data set
 //                if (QueryParseUtils.parseMoviesQuery(movieJsonResult, mMovies)){

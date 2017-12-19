@@ -14,6 +14,7 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import io.reactivex.Single;
 import io.reactivex.android.plugins.RxAndroidPlugins;
@@ -33,20 +34,21 @@ public class MoviesPresenterTest {
     private MoviesContract.View moviesView;
 
     @Mock
-    private MovieService.API movieService;
-
     private MovieRepository movieRepository;
+
     private MoviesPresenter moviesPresenter;
-    private MoviesResponse MANY_MOVIES;
+    private MoviesResponse MANY_MOVIES, EMPTY_MOVIES;
 
 
     @Before
     public void setUp() {
-        movieRepository = new MovieRepository(movieService);
         moviesPresenter = new MoviesPresenter(moviesView, movieRepository);
 
         MANY_MOVIES = new MoviesResponse();
         MANY_MOVIES.setResults(Arrays.asList(new Movie(), new Movie(), new Movie()));
+
+        EMPTY_MOVIES = new MoviesResponse();
+        EMPTY_MOVIES.setResults(Collections.emptyList());
 
         RxJavaPlugins.setIoSchedulerHandler(__ -> Schedulers.trampoline());
         RxAndroidPlugins.setInitMainThreadSchedulerHandler(__ -> Schedulers.trampoline());
@@ -59,11 +61,29 @@ public class MoviesPresenterTest {
 
     @Test
     public void loadMovies_WhenNetworkReturnsMovies_ShouldDisplayMovies() {
-        when(movieService.getPopularMovies(anyString())).thenReturn(Single.just(MANY_MOVIES));
+        when(movieRepository.getPopularMovies()).thenReturn(Single.just(MANY_MOVIES));
 
         moviesPresenter.loadMovies();
 
         verify(moviesView).displayMovies(MANY_MOVIES.getResults());
+    }
+
+    @Test
+    public void loadMovies_WhenNetworkReturnsNoMovies_ShouldDisplayEmptyMovies() {
+        when(movieRepository.getPopularMovies()).thenReturn(Single.just(EMPTY_MOVIES));
+
+        moviesPresenter.loadMovies();
+
+        verify(moviesView).displayEmptyMovies();
+    }
+
+    @Test
+    public void loadMovies_WhenNetworkError_ShouldDisplayLoadingError() {
+        when(movieRepository.getPopularMovies()).thenReturn(Single.error(new Throwable("error")));
+
+        moviesPresenter.loadMovies();
+
+        verify(moviesView).displayLoadingError();
     }
 
 }
