@@ -26,10 +26,8 @@ import com.codertal.moviehub.MovieFavoritesContentObserver;
 import com.codertal.moviehub.data.movies.Movie;
 import com.codertal.moviehub.R;
 import com.codertal.moviehub.adapters.MovieGridAdapter;
-import com.codertal.moviehub.data.movies.MovieGson;
 import com.codertal.moviehub.data.movies.MovieRepository;
 import com.codertal.moviehub.data.movies.local.MovieContract;
-import com.codertal.moviehub.data.movies.remote.MovieService;
 import com.codertal.moviehub.recievers.NetworkChangeBroadcastReceiver;
 import com.codertal.moviehub.tasks.MovieFavoritesQueryHandler;
 import com.codertal.moviehub.tasks.MoviesQueryLoader;
@@ -48,7 +46,7 @@ import butterknife.ButterKnife;
 import dagger.android.support.AndroidSupportInjection;
 
 public class MoviesFragment extends Fragment implements MoviesContract.View,
-        MovieGridAdapter.GridItemClickListener,
+        MovieGridAdapter.OnMovieClickListener,
         LoaderManager.LoaderCallbacks<String>,
         MovieFavoritesQueryHandler.OnMovieFavoriteQueryListener,
         MovieFavoritesContentObserver.OnFavoritesChangeObserver,
@@ -158,7 +156,7 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     }
 
     @Override
-    public void displayMovies(List<MovieGson> movies) {
+    public void displayMovies(List<Movie> movies) {
         showLoadingIndicator(false);
         mMovieGridAdapter.updateData(movies);
         displayResults(true, "");
@@ -237,12 +235,11 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     }
 
     @Override
-    public void onGridItemClick(int position){
+    public void onMovieClick(Movie movie){
         //Start detail activity and pass it information about the chosen movie
         Intent detailIntent = new Intent(getContext(), MovieDetailActivity.class);
 
-        Movie chosenMovie = mMovies.get(position);
-        detailIntent.putExtra(MOVIE_INFO, Parcels.wrap(chosenMovie));
+        detailIntent.putExtra(MOVIE_INFO, Parcels.wrap(movie));
 
         startActivity(detailIntent);
 
@@ -317,10 +314,10 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
                 JSONObject movieJsonResult = new JSONObject(movieSearchResults);
                 mMovies.clear();
 
-                //Parse, if success update adapter data set
-                if (QueryParseUtils.parseMoviesQuery(movieJsonResult, mMovies)){
-                    mMovieGridAdapter.updateDataSet();
-                }
+//                //Parse, if success update adapter data set
+//                if (QueryParseUtils.parseMoviesQuery(movieJsonResult, mMovies)){
+//                    mMovieGridAdapter.updateDataSet();
+//                }
 
             } catch (Throwable t) {
                 Log.e("MoviesFragment", "Bad JSON: "  + movieSearchResults );

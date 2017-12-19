@@ -17,7 +17,7 @@ public class MovieRepository {
         mMovieService = movieService;
     }
 
-    public void getPopularMovies(DisposableSingleObserver<List<MovieGson>> moviesObserver) {
+    public void getPopularMovies(DisposableSingleObserver<List<Movie>> moviesObserver) {
         mMovieService.getPopularMovies(BuildConfig.MOVIE_DB_API_KEY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

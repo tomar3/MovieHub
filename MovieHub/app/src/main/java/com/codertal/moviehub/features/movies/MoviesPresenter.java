@@ -2,7 +2,7 @@ package com.codertal.moviehub.features.movies;
 
 import android.support.annotation.NonNull;
 
-import com.codertal.moviehub.data.movies.MovieGson;
+import com.codertal.moviehub.data.movies.Movie;
 import com.codertal.moviehub.data.movies.MovieRepository;
 
 import java.util.List;
@@ -24,9 +24,9 @@ public class MoviesPresenter implements MoviesContract.Presenter {
 
     @Override
     public void loadMovies() {
-        mMovieRepository.getPopularMovies(new DisposableSingleObserver<List<MovieGson>>() {
+        mMovieRepository.getPopularMovies(new DisposableSingleObserver<List<Movie>>() {
             @Override
-            public void onSuccess(List<MovieGson> movies) {
+            public void onSuccess(List<Movie> movies) {
                 //TODO: WHY DOES THIS GET CALLED MULTIPLE TIMES
                 // I THINK BECAUSE THE OTHER FRAGMENT TABS ARE CALLING THE SAME CODE
                 if(movies.isEmpty()){

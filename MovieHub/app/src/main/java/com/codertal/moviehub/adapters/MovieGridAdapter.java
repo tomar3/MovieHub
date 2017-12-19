@@ -9,29 +9,27 @@ import android.widget.ImageView;
 import com.codertal.moviehub.GlideApp;
 import com.codertal.moviehub.R;
 import com.codertal.moviehub.data.movies.Movie;
-import com.codertal.moviehub.data.movies.MovieGson;
 import com.codertal.moviehub.utilities.NetworkUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.MovieViewHolder> {
-    final private GridItemClickListener mOnItemClickListener;
+    final private OnMovieClickListener mOnMovieClickListener;
     private Context mContext;
-    private List<MovieGson> mMovies;
+    private List<Movie> mMovies;
 
     //Declare grid item click listener for this adapter
-    public interface GridItemClickListener{
-        public void onGridItemClick(int position);
+    public interface OnMovieClickListener {
+        void onMovieClick(Movie movie);
     }
 
-    public MovieGridAdapter(List<MovieGson> movies, Context context,
-                            GridItemClickListener gridItemClickListener){
+    public MovieGridAdapter(List<Movie> movies, Context context,
+                            OnMovieClickListener onMovieClickListener){
         mMovies = movies;
 
         //Use main activity for the context and grid item click listener
         mContext = context;
-        mOnItemClickListener = gridItemClickListener;
+        mOnMovieClickListener = onMovieClickListener;
     }
 
     @Override
@@ -46,7 +44,7 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.Movi
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
             GlideApp.with(mContext)
-                    .load(NetworkUtils.buildImageUrl(mMovies.get(position).getPosterPath()))
+                    .load(NetworkUtils.buildPosterUrl(mMovies.get(position).getPosterPath()))
                     .placeholder(R.drawable.loading_image)
                     .error(R.drawable.error_placeholder)
                     .into(holder.mMoviePoster);
@@ -57,7 +55,7 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.Movi
         return mMovies.size();
     }
 
-    public void updateData(List<MovieGson> movies) {
+    public void updateData(List<Movie> movies) {
         mMovies = movies;
         notifyDataSetChanged();
     }
@@ -74,7 +72,7 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.Movi
             super(itemView);
 
             //View holder contains only one image view
-            mMoviePoster = (ImageView) itemView.findViewById(R.id.iv_movie_poster);
+            mMoviePoster = itemView.findViewById(R.id.iv_movie_poster);
 
             //Set this instance as the on click listener for the item view
             itemView.setOnClickListener(this);
@@ -83,7 +81,7 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.Movi
         @Override
         public void onClick(View v){
             //Call the on grid item click method, sending the position clicked
-            mOnItemClickListener.onGridItemClick(getAdapterPosition());
+            mOnMovieClickListener.onMovieClick(mMovies.get(getAdapterPosition()));
         }
 
 

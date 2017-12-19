@@ -108,7 +108,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/tv_descr"
+                android:id="@+id/tv_overview"
                 tools:text="@string/hc_movie_descr"
                 android:layout_margin="@dimen/activity_detail_spacing"
                 android:fontFamily="sans-serif"
@@ -120,7 +120,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:id="@+id/cv_trailer_section"
-                android:layout_below="@id/tv_descr"/>
+                android:layout_below="@id/tv_overview"/>
 
 
             <include

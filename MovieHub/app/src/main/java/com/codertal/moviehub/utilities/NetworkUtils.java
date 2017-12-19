@@ -33,12 +33,12 @@ public class NetworkUtils {
 
 
 
-    public static String buildImageUrl(String imageExtension) {
+    public static String buildPosterUrl(String imageExtension) {
         //Append the image extension path to the base url for images
         return MOVIE_IMAGE_BASE_URL + "/" + imageExtension;
     }
 
-    public static String buildImageBackdropUrl(String imageExtension) {
+    public static String buildBackdropUrl(String imageExtension) {
         //Append the image extension path to the base url for images
         return MOVIE_IMAGE_BASE_BACKDROP_URL + "/" + imageExtension;
     }

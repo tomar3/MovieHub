@@ -14,41 +14,41 @@ import java.util.ArrayList;
 
 public class QueryParseUtils {
 
-    public static boolean parseMoviesQuery(JSONObject moviesJSONResult, ArrayList<Movie> movies){
-        boolean success;
-
-        //Load each movie's information from json object retrieved from http request
-        try{
-
-            JSONArray moviesArray = moviesJSONResult.getJSONArray("results");
-
-            //Iterate to each movie object and store its necessary info
-            for(int i = 0; i< moviesArray.length(); i++){
-                JSONObject movieInfo = moviesArray.getJSONObject(i);
-
-                //Store movie stats and info
-                movies.add(new Movie(
-                        movieInfo.getString("title"),
-                        movieInfo.getString("vote_average"),
-                        movieInfo.getString("release_date"),
-                        movieInfo.getString("overview"),
-                        movieInfo.getString("id"),
-                        NetworkUtils.buildImageUrl(movieInfo.getString("poster_path")),
-                        NetworkUtils.buildImageBackdropUrl(movieInfo.getString("backdrop_path"))
-                ));
-
-            }
-
-            success = true;
-
-        }
-        catch (Exception e){
-            e.printStackTrace();
-            success = false;
-        }
-
-        return success;
-    }
+//    public static boolean parseMoviesQuery(JSONObject moviesJSONResult, ArrayList<Movie> movies){
+//        boolean success;
+//
+//        //Load each movie's information from json object retrieved from http request
+//        try{
+//
+//            JSONArray moviesArray = moviesJSONResult.getJSONArray("results");
+//
+//            //Iterate to each movie object and store its necessary info
+//            for(int i = 0; i< moviesArray.length(); i++){
+//                JSONObject movieInfo = moviesArray.getJSONObject(i);
+//
+//                //Store movie stats and info
+//                movies.add(new Movie(
+//                        movieInfo.getString("title"),
+//                        movieInfo.getString("vote_average"),
+//                        movieInfo.getString("release_date"),
+//                        movieInfo.getString("overview"),
+//                        movieInfo.getString("id"),
+//                        NetworkUtils.buildPosterUrl(movieInfo.getString("poster_path")),
+//                        NetworkUtils.buildBackdropUrl(movieInfo.getString("backdrop_path"))
+//                ));
+//
+//            }
+//
+//            success = true;
+//
+//        }
+//        catch (Exception e){
+//            e.printStackTrace();
+//            success = false;
+//        }
+//
+//        return success;
+//    }
 
 
     public static boolean parseMovieFavoriteQuery(Cursor cursor, ArrayList<Movie> movies){
@@ -62,20 +62,20 @@ public class QueryParseUtils {
 
                 //Store movie stats and info
                 movies.add(new Movie(
+                        cursor.getInt(
+                                cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID)),
+                        cursor.getDouble(
+                                cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_RATING)),
                         cursor.getString(
                                 cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_TITLE)),
                         cursor.getString(
-                                cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_RATING)),
+                                cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_URL)),
                         cursor.getString(
-                                cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_YEAR)),
+                                cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_BACKDROP_URL)),
                         cursor.getString(
                                 cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_DESCR)),
                         cursor.getString(
-                                cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID)),
-                        cursor.getString(
-                                cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_URL)),
-                        cursor.getString(
-                                cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_BACKDROP_URL))
+                                cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_YEAR))
                 ));
 
             }

@@ -64,7 +64,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
     @BindView(R.id.tv_year) TextView year;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.tv_rating) TextView rating;
-    @BindView(R.id.tv_descr) TextView descr;
+    @BindView(R.id.tv_overview) TextView overview;
     @BindView(R.id.tv_title) TextView title;
     @BindView(R.id.fab_fav) FloatingActionButton fabFavorite;
     @BindView(R.id.iv_movie_thumb) ImageView movieThumbnail;
@@ -123,16 +123,16 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
             //Use Glide to load the poster url
             GlideApp.with(this)
-                    .load(mMovie.getPosterURL())
+                    .load(NetworkUtils.buildPosterUrl(mMovie.getPosterPath()))
                     .placeholder(R.drawable.loading_image)
                     .error(R.drawable.error_placeholder)
                     .into(movieThumbnail);
 
             title.setText(mMovie.getTitle());
-            year.setText(mMovie.getYear());
-            String ratingConcat = mMovie.getRating() + "/10";
+            year.setText(mMovie.getReleaseDate().split("-")[0]);
+            String ratingConcat = mMovie.getVoteAverage() + "/10";
             rating.setText(ratingConcat);
-            descr.setText(mMovie.getDescr());
+            overview.setText(mMovie.getOverview());
 
 
             View trailerSectionInclude = findViewById(R.id.cv_trailer_section);
@@ -276,7 +276,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
     private void makeMovieDetailQuery(){
         Bundle movieIdBundle = new Bundle();
-        movieIdBundle.putString(MOVIE_ID_KEY, mMovie.getMovieId());
+        movieIdBundle.putString(MOVIE_ID_KEY, mMovie.getId().toString());
         getSupportLoaderManager().restartLoader(MOVIE_DETAIL_LOADER, movieIdBundle, MovieDetailActivity.this);
     }
 
@@ -365,7 +365,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
             //Use Glide to load the backdrop url
             GlideApp.with(this)
-                    .load(mMovie.getBackdropURL())
+                    .load(NetworkUtils.buildBackdropUrl(mMovie.getBackdropPath()))
                     .error(R.drawable.error_placeholder)
                     .placeholder(R.drawable.loading_image)
                     .centerCrop()
@@ -378,7 +378,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
                 MovieContract.MovieEntry.CONTENT_URI,
                 null,
                 MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?",
-                new String[]{mMovie.getMovieId()},
+                new String[]{mMovie.getId().toString()},
                 null);
     }
 
@@ -388,12 +388,12 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
         //Put the movie info into the ContentValues
         contentValues.put(MovieContract.MovieEntry.COLUMN_TITLE, mMovie.getTitle());
-        contentValues.put(MovieContract.MovieEntry.COLUMN_RATING, mMovie.getRating());
-        contentValues.put(MovieContract.MovieEntry.COLUMN_YEAR, mMovie.getYear());
-        contentValues.put(MovieContract.MovieEntry.COLUMN_DESCR, mMovie.getDescr());
-        contentValues.put(MovieContract.MovieEntry.COLUMN_POSTER_URL, mMovie.getPosterURL());
-        contentValues.put(MovieContract.MovieEntry.COLUMN_BACKDROP_URL, mMovie.getBackdropURL());
-        contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, mMovie.getMovieId());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_RATING, mMovie.getVoteAverage());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_YEAR, mMovie.getReleaseDate());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_DESCR, mMovie.getOverview());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_POSTER_URL, mMovie.getPosterPath());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_BACKDROP_URL, mMovie.getBackdropPath());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, mMovie.getId().toString());
 
         //Insert the content values via a ContentResolver
         movieFavoritesQueryHandler.startInsert(MOVIE_FAV_INSERT, null,
@@ -405,7 +405,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
         movieFavoritesQueryHandler.startDelete(MOVIE_FAV_DELETE, null,
                 MovieContract.MovieEntry.CONTENT_URI,
                 MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?",
-                new String[]{mMovie.getMovieId()});
+                new String[]{mMovie.getId().toString()});
     }
 
     private void setFavoriteIcon(){

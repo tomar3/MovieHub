@@ -107,7 +107,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tv_descr"
+                    android:id="@+id/tv_overview"
                     tools:text="@string/hc_movie_descr"
                     android:layout_marginRight="@dimen/activity_detail_spacing"
                     android:layout_marginEnd="@dimen/activity_detail_spacing"

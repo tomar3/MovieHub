@@ -1,6 +1,6 @@
 package com.codertal.moviehub.features.movies;
 
-import com.codertal.moviehub.data.movies.MovieGson;
+import com.codertal.moviehub.data.movies.Movie;
 import com.codertal.moviehub.data.movies.MovieRepository;
 import com.codertal.moviehub.data.movies.MoviesResponse;
 import com.codertal.moviehub.data.movies.remote.MovieService;
@@ -20,7 +20,6 @@ import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -47,7 +46,7 @@ public class MoviesPresenterTest {
         moviesPresenter = new MoviesPresenter(moviesView, movieRepository);
 
         MANY_MOVIES = new MoviesResponse();
-        MANY_MOVIES.setResults(Arrays.asList(new MovieGson(), new MovieGson(), new MovieGson()));
+        MANY_MOVIES.setResults(Arrays.asList(new Movie(), new Movie(), new Movie()));
 
         RxJavaPlugins.setIoSchedulerHandler(__ -> Schedulers.trampoline());
         RxAndroidPlugins.setInitMainThreadSchedulerHandler(__ -> Schedulers.trampoline());

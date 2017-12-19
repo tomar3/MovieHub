@@ -21,7 +21,7 @@ public class MoviesResponse {
 
     @SerializedName("results")
     @Expose
-    private List<MovieGson> results = null;
+    private List<Movie> results = null;
 
     public Integer getPage() {
         return page;
@@ -47,11 +47,11 @@ public class MoviesResponse {
         this.totalPages = totalPages;
     }
 
-    public List<MovieGson> getResults() {
+    public List<Movie> getResults() {
         return results;
     }
 
-    public void setResults(List<MovieGson> results) {
+    public void setResults(List<Movie> results) {
         this.results = results;
     }
 }
