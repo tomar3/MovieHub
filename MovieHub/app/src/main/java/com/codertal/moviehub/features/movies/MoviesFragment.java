@@ -1,5 +1,6 @@
 package com.codertal.moviehub.features.movies;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
@@ -25,11 +26,13 @@ import com.codertal.moviehub.MovieFavoritesContentObserver;
 import com.codertal.moviehub.data.movies.Movie;
 import com.codertal.moviehub.R;
 import com.codertal.moviehub.adapters.MovieGridAdapter;
+import com.codertal.moviehub.data.movies.MovieGson;
+import com.codertal.moviehub.data.movies.MovieRepository;
 import com.codertal.moviehub.data.movies.local.MovieContract;
+import com.codertal.moviehub.data.movies.remote.MovieService;
 import com.codertal.moviehub.recievers.NetworkChangeBroadcastReceiver;
 import com.codertal.moviehub.tasks.MovieFavoritesQueryHandler;
 import com.codertal.moviehub.tasks.MoviesQueryLoader;
-import com.codertal.moviehub.utilities.NetworkUtils;
 import com.codertal.moviehub.utilities.QueryParseUtils;
 
 import org.json.JSONObject;
@@ -38,8 +41,11 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.android.support.AndroidSupportInjection;
 
 public class MoviesFragment extends Fragment implements MoviesContract.View,
         MovieGridAdapter.GridItemClickListener,
@@ -52,6 +58,9 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     @BindView(R.id.empty_favorites_view) View mEmptyFavoritesMessage;
     @BindView(R.id.pb_loading_indicator) ProgressBar mLoadingIndicator;
     @BindView(R.id.rv_movies) RecyclerView mMoviesRecycler;
+
+    @Inject
+    MovieRepository mMovieRepository;
 
     private static final int MOVIE_FAV_QUERY = 20;
     public static final int MOVIES_POPULAR_SEARCH_LOADER = 10;
@@ -81,11 +90,20 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     private MovieFavoritesContentObserver mFavoritesContentObserver;
     private NetworkChangeBroadcastReceiver mNetworkChangeBroadcastReceiver;
 
+    private MoviesContract.Presenter mPresenter;
+
     public MoviesFragment() {}
+
+    @Override
+    public void onAttach(Context context) {
+        AndroidSupportInjection.inject(this);
+        super.onAttach(context);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mPresenter = new MoviesPresenter(this, mMovieRepository);
         mMovies = new ArrayList<>();
     }
 
@@ -140,48 +158,53 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     }
 
     @Override
-    public void displayMovies(List<Movie> movies) {
-
+    public void displayMovies(List<MovieGson> movies) {
+        showLoadingIndicator(false);
+        mMovieGridAdapter.updateData(movies);
+        displayResults(true, "");
     }
 
     private void makeMovieSearchQuery(String filterType) {
 
-        if(filterType.equals(FAVORITES)){
-            //Initialize components for communicating with content provider
-            movieFavoritesQueryHandler = new MovieFavoritesQueryHandler(getContext().getContentResolver(), this);
-            mFavoritesContentObserver = new MovieFavoritesContentObserver(new Handler(), this);
+//        if(filterType.equals(FAVORITES)){
+//            //Initialize components for communicating with content provider
+//            movieFavoritesQueryHandler = new MovieFavoritesQueryHandler(getContext().getContentResolver(), this);
+//            mFavoritesContentObserver = new MovieFavoritesContentObserver(new Handler(), this);
+//
+//            getContext().getContentResolver().registerContentObserver(MovieContract.MovieEntry.CONTENT_URI,
+//                    false,
+//                    mFavoritesContentObserver);
+//            queryFavoritesContent();
+//        }else{
+//
+//            String movieBaseUrl;
+//            final int MOVIES_SEARCH_LOADER;
+//
+//            //Obtain api base url string based on sort type
+//            if(filterType.equals(POPULAR)){
+//                movieBaseUrl = NetworkUtils.getMovieSearchPopularUrl();
+//                MOVIES_SEARCH_LOADER = MOVIES_POPULAR_SEARCH_LOADER;
+//            }else{
+//                movieBaseUrl = NetworkUtils.getMovieSearchTopUrl();
+//                MOVIES_SEARCH_LOADER = MOVIES_TOP_SEARCH_LOADER;
+//            }
+//
+//            //Build search url with api key
+//            String movieSearchUrl = NetworkUtils.buildSearchUrl(movieBaseUrl);
+//            Bundle urlBundle = new Bundle();
+//            urlBundle.putString(MOVIES_SEARCH_URL_KEY, movieSearchUrl);
+//
+//            //Check if connected to internet before attempting to load
+//            if(NetworkUtils.isNetworkAvailable(getContext())) {
+//                getActivity().getSupportLoaderManager().restartLoader(MOVIES_SEARCH_LOADER, urlBundle,
+//                        MoviesFragment.this);
+//            }else {
+//                displayResults(false, NETWORK_ERROR);
+//            }
+//        }
 
-            getContext().getContentResolver().registerContentObserver(MovieContract.MovieEntry.CONTENT_URI,
-                    false,
-                    mFavoritesContentObserver);
-            queryFavoritesContent();
-        }else{
-
-            String movieBaseUrl;
-            final int MOVIES_SEARCH_LOADER;
-
-            //Obtain api base url string based on sort type
-            if(filterType.equals(POPULAR)){
-                movieBaseUrl = NetworkUtils.getMovieSearchPopularUrl();
-                MOVIES_SEARCH_LOADER = MOVIES_POPULAR_SEARCH_LOADER;
-            }else{
-                movieBaseUrl = NetworkUtils.getMovieSearchTopUrl();
-                MOVIES_SEARCH_LOADER = MOVIES_TOP_SEARCH_LOADER;
-            }
-
-            //Build search url with api key
-            String movieSearchUrl = NetworkUtils.buildSearchUrl(movieBaseUrl);
-            Bundle urlBundle = new Bundle();
-            urlBundle.putString(MOVIES_SEARCH_URL_KEY, movieSearchUrl);
-
-            //Check if connected to internet before attempting to load
-            if(NetworkUtils.isNetworkAvailable(getContext())) {
-                getActivity().getSupportLoaderManager().restartLoader(MOVIES_SEARCH_LOADER, urlBundle,
-                        MoviesFragment.this);
-            }else {
-                displayResults(false, NETWORK_ERROR);
-            }
-        }
+        showLoadingIndicator(true);
+        mPresenter.loadMovies();
     }
 
     private void displayResults(boolean success, String errorType){
@@ -353,7 +376,7 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
         mMoviesRecycler.setHasFixedSize(true);
 
         //Create and set the movie grid adapter
-        mMovieGridAdapter = new MovieGridAdapter(mMovies.size(), mMovies, getContext(), this);
+        mMovieGridAdapter = new MovieGridAdapter(new ArrayList<>(), getContext(), this);
         mMoviesRecycler.setAdapter(mMovieGridAdapter);
     }
 }

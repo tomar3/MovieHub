@@ -9,23 +9,24 @@ import android.widget.ImageView;
 import com.codertal.moviehub.GlideApp;
 import com.codertal.moviehub.R;
 import com.codertal.moviehub.data.movies.Movie;
+import com.codertal.moviehub.data.movies.MovieGson;
+import com.codertal.moviehub.utilities.NetworkUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.MovieViewHolder> {
     final private GridItemClickListener mOnItemClickListener;
-    private int mNumberOfItems;
     private Context mContext;
-    private ArrayList<Movie> mMovies;
+    private List<MovieGson> mMovies;
 
     //Declare grid item click listener for this adapter
     public interface GridItemClickListener{
         public void onGridItemClick(int position);
     }
 
-    public MovieGridAdapter(int numberOfItems, ArrayList<Movie> movies, Context context,
+    public MovieGridAdapter(List<MovieGson> movies, Context context,
                             GridItemClickListener gridItemClickListener){
-        mNumberOfItems = numberOfItems;
         mMovies = movies;
 
         //Use main activity for the context and grid item click listener
@@ -45,7 +46,7 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.Movi
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
             GlideApp.with(mContext)
-                    .load(mMovies.get(position).getPosterURL())
+                    .load(NetworkUtils.buildImageUrl(mMovies.get(position).getPosterPath()))
                     .placeholder(R.drawable.loading_image)
                     .error(R.drawable.error_placeholder)
                     .into(holder.mMoviePoster);
@@ -53,11 +54,15 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.Movi
 
     @Override
     public int getItemCount(){
-        return mNumberOfItems;
+        return mMovies.size();
+    }
+
+    public void updateData(List<MovieGson> movies) {
+        mMovies = movies;
+        notifyDataSetChanged();
     }
 
     public void updateDataSet(){
-        mNumberOfItems = mMovies.size();
         this.notifyDataSetChanged();
     }
 

@@ -6,6 +6,8 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 
 import com.codertal.moviehub.BuildConfig;
+import com.codertal.moviehub.data.movies.remote.MovieService;
+import com.codertal.moviehub.data.movies.remote.RetrofitMovieClient;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +17,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 public class NetworkUtils {
+
     private final static String MOVIE_SEARCH_POPULAR_URL = "http://api.themoviedb.org/3/movie/popular";
     private final static String MOVIE_SEARCH_TOP_URL = "http://api.themoviedb.org/3/movie/top_rated";
     private final static String MOVIE_IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w342";
