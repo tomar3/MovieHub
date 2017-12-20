@@ -1,4 +1,4 @@
-package com.codertal.moviehub;
+package com.codertal.moviehub.features.movies;
 
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -6,8 +6,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.codertal.moviehub.features.movies.MoviesFilterType;
-import com.codertal.moviehub.features.movies.MoviesFragment;
+import com.codertal.moviehub.R;
 
 import javax.inject.Inject;
 
@@ -15,9 +14,8 @@ import dagger.android.AndroidInjection;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
-import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
+public class MoviesActivity extends AppCompatActivity implements HasSupportFragmentInjector {
 
     @Inject
     DispatchingAndroidInjector<Fragment> mSupportFragmentInjector;

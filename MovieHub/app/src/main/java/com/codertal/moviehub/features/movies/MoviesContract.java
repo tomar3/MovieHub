@@ -9,15 +9,17 @@ public interface MoviesContract {
 
     interface View {
 
+        void displayEmptyFavorites();
         void displayEmptyMovies();
         void displayMovies(List<Movie> movies);
         void displayLoadingError();
+        void displayLoadingIndicator(boolean isLoading);
 
     }
 
     abstract class Presenter extends BaseRxPresenter{
 
-        abstract void loadMovies(String filterType);
+        abstract void loadMovies();
 
     }
 }

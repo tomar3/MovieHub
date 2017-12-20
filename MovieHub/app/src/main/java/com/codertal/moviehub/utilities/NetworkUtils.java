@@ -6,8 +6,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 
 import com.codertal.moviehub.BuildConfig;
-import com.codertal.moviehub.data.movies.remote.MovieService;
-import com.codertal.moviehub.data.movies.remote.RetrofitMovieClient;
 
 import java.io.IOException;
 import java.io.InputStream;

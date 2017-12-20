@@ -11,51 +11,15 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class QueryParseUtils {
 
-//    public static boolean parseMoviesQuery(JSONObject moviesJSONResult, ArrayList<Movie> movies){
-//        boolean success;
-//
-//        //Load each movie's information from json object retrieved from http request
-//        try{
-//
-//            JSONArray moviesArray = moviesJSONResult.getJSONArray("results");
-//
-//            //Iterate to each movie object and store its necessary info
-//            for(int i = 0; i< moviesArray.length(); i++){
-//                JSONObject movieInfo = moviesArray.getJSONObject(i);
-//
-//                //Store movie stats and info
-//                movies.add(new Movie(
-//                        movieInfo.getString("title"),
-//                        movieInfo.getString("vote_average"),
-//                        movieInfo.getString("release_date"),
-//                        movieInfo.getString("overview"),
-//                        movieInfo.getString("id"),
-//                        NetworkUtils.buildPosterUrl(movieInfo.getString("poster_path")),
-//                        NetworkUtils.buildBackdropUrl(movieInfo.getString("backdrop_path"))
-//                ));
-//
-//            }
-//
-//            success = true;
-//
-//        }
-//        catch (Exception e){
-//            e.printStackTrace();
-//            success = false;
-//        }
-//
-//        return success;
-//    }
-
-
-    public static boolean parseMovieFavoriteQuery(Cursor cursor, ArrayList<Movie> movies){
-        boolean success;
+    public static List<Movie> parseMovieFavoriteQuery(Cursor cursor){
+        List<Movie> movies = new ArrayList<>(cursor.getCount());
 
         if(cursor.getCount() < 1){
-           success = false;
+           return null;
         }else {
 
             while (cursor.moveToNext()) {
@@ -80,10 +44,8 @@ public class QueryParseUtils {
 
             }
 
-           success = true;
+           return movies;
         }
-
-        return success;
     }
 
     public static boolean parseMovieDetailQuery(JSONObject movieDetailJSONResult, ArrayList<Trailer> trailers,

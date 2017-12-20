@@ -1,4 +1,4 @@
-package com.codertal.moviehub;
+package com.codertal.moviehub.features.movies.favorites;
 
 import android.database.ContentObserver;
 import android.net.Uri;
@@ -8,10 +8,14 @@ public class MovieFavoritesContentObserver extends ContentObserver {
     private OnFavoritesChangeObserver mFavoritesChangeObserver;
 
     public interface OnFavoritesChangeObserver{
-        public void onFavoritesContentChange(Uri uri);
+        void onFavoritesContentChange(Uri uri);
     }
-    public MovieFavoritesContentObserver(Handler handler, OnFavoritesChangeObserver favoritesChangeObserver) {
+
+    public MovieFavoritesContentObserver(Handler handler) {
         super(handler);
+    }
+
+    public void setFavoritesChangeObserver(OnFavoritesChangeObserver favoritesChangeObserver) {
         mFavoritesChangeObserver = favoritesChangeObserver;
     }
 

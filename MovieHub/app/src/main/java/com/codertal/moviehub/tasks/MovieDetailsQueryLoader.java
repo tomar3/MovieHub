@@ -9,7 +9,7 @@ import com.codertal.moviehub.utilities.NetworkUtils;
 import java.io.IOException;
 import java.net.URL;
 
-import static com.codertal.moviehub.MovieDetailActivity.MOVIE_ID_KEY;
+import static com.codertal.moviehub.features.moviedetail.MovieDetailActivity.MOVIE_ID_KEY;
 
 public class MovieDetailsQueryLoader extends AsyncTaskLoader<String> {
     private String movieId;

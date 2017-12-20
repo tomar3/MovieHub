@@ -1,4 +1,4 @@
-package com.codertal.moviehub;
+package com.codertal.moviehub.features.moviedetail;
 
 
 import android.content.ContentValues;
@@ -32,6 +32,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.codertal.moviehub.features.movies.favorites.FavoriteSnackbarListener;
+import com.codertal.moviehub.GlideApp;
+import com.codertal.moviehub.R;
 import com.codertal.moviehub.adapters.ReviewListAdapter;
 import com.codertal.moviehub.adapters.TrailerListAdapter;
 import com.codertal.moviehub.data.movies.local.MovieContract;

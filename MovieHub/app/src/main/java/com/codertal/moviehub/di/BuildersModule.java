@@ -1,6 +1,6 @@
 package com.codertal.moviehub.di;
 
-import com.codertal.moviehub.MainActivity;
+import com.codertal.moviehub.features.movies.MoviesActivity;
 import com.codertal.moviehub.data.modules.MoviesModule;
 import com.codertal.moviehub.features.movies.MoviesFragment;
 
@@ -14,7 +14,7 @@ import dagger.android.ContributesAndroidInjector;
 public abstract class BuildersModule {
 
     @ContributesAndroidInjector()
-    abstract MainActivity bindMainActivity();
+    abstract MoviesActivity bindMainActivity();
 
     @ContributesAndroidInjector(modules = MoviesModule.class)
     abstract MoviesFragment bindMoviesFragment();

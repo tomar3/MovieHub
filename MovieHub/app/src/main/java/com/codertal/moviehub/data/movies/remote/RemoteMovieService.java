@@ -6,7 +6,7 @@ import io.reactivex.Single;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
-public class MovieService {
+public class RemoteMovieService {
 
     private static final String MOVIE_SEARCH_BASE_URL = "http://api.themoviedb.org/3/movie/";
 
@@ -18,7 +18,7 @@ public class MovieService {
         Single<MoviesResponse> getTopRatedMovies(@Query("api_key") String apiKey);
     }
 
-    public static MovieService.API getMovieService(){
+    public static RemoteMovieService.API getMovieService(){
         return RetrofitMovieClient.getClient(MOVIE_SEARCH_BASE_URL).create(API.class);
     }
 }

@@ -1,4 +1,4 @@
-package com.codertal.moviehub.adapters;
+package com.codertal.moviehub.features.movies.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -60,10 +60,6 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.Movi
         notifyDataSetChanged();
     }
 
-    public void updateDataSet(){
-        this.notifyDataSetChanged();
-    }
-
     //Define the View Holder for this adapter
     class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         ImageView mMoviePoster;
@@ -83,7 +79,5 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.Movi
             //Call the on grid item click method, sending the position clicked
             mOnMovieClickListener.onMovieClick(mMovies.get(getAdapterPosition()));
         }
-
-
     }
 }

@@ -1,4 +1,4 @@
-package com.codertal.moviehub;
+package com.codertal.moviehub.features.movies;
 
 
 import android.os.Bundle;
