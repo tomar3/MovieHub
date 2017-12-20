@@ -45,6 +45,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.support.AndroidSupportInjection;
 
+import static com.codertal.moviehub.features.movies.MoviesFilterType.FAVORITES;
+
 public class MoviesFragment extends Fragment implements MoviesContract.View,
         MovieGridAdapter.OnMovieClickListener,
         LoaderManager.LoaderCallbacks<String>,
@@ -65,9 +67,6 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     public static final int MOVIES_TOP_SEARCH_LOADER = 11;
 
     public static final String MOVIES_SEARCH_URL_KEY = "movieSearchUrlKey";
-    public static final String TOP_RATED = "TOP RATED";
-    public static final String POPULAR = "POPULAR";
-    public static final String FAVORITES = "FAVORITES";
     public static final String SORT_TYPE = "sortType";
 
     private static final String SCROLL_POSITION = "scrollPosition";
@@ -215,7 +214,7 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
 //        }
 
         showLoadingIndicator(true);
-        mPresenter.loadMovies();
+        mPresenter.loadMovies(mFilterType);
     }
 
     private void displayResults(boolean success, String errorType){

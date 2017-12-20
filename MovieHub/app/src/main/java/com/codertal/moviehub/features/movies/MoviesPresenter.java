@@ -8,10 +8,14 @@ import com.codertal.moviehub.data.movies.MoviesResponse;
 
 import java.util.List;
 
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
+
+import static com.codertal.moviehub.features.movies.MoviesFilterType.POPULAR;
+import static com.codertal.moviehub.features.movies.MoviesFilterType.TOP_RATED;
 
 public class MoviesPresenter extends MoviesContract.Presenter {
 
@@ -27,8 +31,24 @@ public class MoviesPresenter extends MoviesContract.Presenter {
     }
 
     @Override
-    public void loadMovies() {
-        mCompositeDisposable.add(mMovieRepository.getPopularMovies()
+    public void loadMovies(String filterType) {
+        Single<MoviesResponse> movieQuery;
+
+        switch (filterType) {
+            case POPULAR:
+                movieQuery = mMovieRepository.getPopularMovies();
+                break;
+
+            case TOP_RATED:
+                movieQuery = mMovieRepository.getTopRatedMovies();
+                break;
+
+            default:
+                movieQuery = mMovieRepository.getPopularMovies();
+                break;
+        }
+
+        mCompositeDisposable.add(movieQuery
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(MoviesResponse::getResults)

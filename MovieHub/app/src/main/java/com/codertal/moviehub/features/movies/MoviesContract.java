@@ -17,7 +17,7 @@ public interface MoviesContract {
 
     abstract class Presenter extends BaseRxPresenter{
 
-        abstract void loadMovies();
+        abstract void loadMovies(String filterType);
 
     }
 }

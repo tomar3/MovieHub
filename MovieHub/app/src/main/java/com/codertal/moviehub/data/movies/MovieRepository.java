@@ -16,4 +16,8 @@ public class MovieRepository {
     public Single<MoviesResponse> getPopularMovies() {
         return mMovieService.getPopularMovies(BuildConfig.MOVIE_DB_API_KEY);
     }
+
+    public Single<MoviesResponse> getTopRatedMovies() {
+        return mMovieService.getTopRatedMovies(BuildConfig.MOVIE_DB_API_KEY);
+    }
 }

@@ -14,7 +14,7 @@ public class MovieService {
         @GET("popular?")
         Single<MoviesResponse> getPopularMovies(@Query("api_key") String apiKey);
 
-        @GET("/top_rated?")
+        @GET("top_rated?")
         Single<MoviesResponse> getTopRatedMovies(@Query("api_key") String apiKey);
     }
 

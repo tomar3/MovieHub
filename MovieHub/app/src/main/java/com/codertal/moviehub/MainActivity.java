@@ -6,6 +6,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.codertal.moviehub.features.movies.MoviesFilterType;
 import com.codertal.moviehub.features.movies.MoviesFragment;
 
 import javax.inject.Inject;
@@ -14,6 +15,7 @@ import dagger.android.AndroidInjection;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
+import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
 
@@ -36,11 +38,11 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     private void setupViewPager(ViewPager viewPager) {
         //Add three fragment tabs for different filters
         MovieGridViewPager adapter = new MovieGridViewPager(getSupportFragmentManager());
-        adapter.addFragment(new MoviesFragment(), MoviesFragment.POPULAR);
-        adapter.addFragment(new MoviesFragment(), MoviesFragment.TOP_RATED);
-        adapter.addFragment(new MoviesFragment(), MoviesFragment.FAVORITES);
+        adapter.addFragment(new MoviesFragment(), MoviesFilterType.POPULAR);
+        adapter.addFragment(new MoviesFragment(), MoviesFilterType.TOP_RATED);
+        adapter.addFragment(new MoviesFragment(), MoviesFilterType.FAVORITES);
         viewPager.setAdapter(adapter);
-        viewPager.setOffscreenPageLimit(3);
+        viewPager.setOffscreenPageLimit(adapter.getCount());
     }
 
 
