@@ -7,9 +7,8 @@ import android.support.annotation.NonNull;
 import com.codertal.moviehub.data.movies.Movie;
 import com.codertal.moviehub.data.movies.MovieRepository;
 import com.codertal.moviehub.data.movies.MoviesResponse;
-import com.codertal.moviehub.features.movies.favorites.MovieFavoritesContentObserver;
-import com.codertal.moviehub.tasks.MovieFavoritesQueryHandler;
-import com.codertal.moviehub.utilities.QueryParseUtils;
+import com.codertal.moviehub.features.movies.favorites.FavoriteMoviesObserver;
+import com.codertal.moviehub.utilities.FavoriteMovieParser;
 
 import java.util.List;
 
@@ -23,9 +22,7 @@ import static com.codertal.moviehub.features.movies.MoviesFilterType.FAVORITES;
 import static com.codertal.moviehub.features.movies.MoviesFilterType.POPULAR;
 import static com.codertal.moviehub.features.movies.MoviesFilterType.TOP_RATED;
 
-public class MoviesPresenter extends MoviesContract.Presenter implements
-        MovieFavoritesContentObserver.OnFavoritesChangeObserver,
-        MovieFavoritesQueryHandler.OnMovieFavoriteQueryListener {
+public class MoviesPresenter extends MoviesContract.Presenter implements FavoriteMoviesObserver{
 
     @NonNull
     private MoviesContract.View mMoviesView;
@@ -71,8 +68,7 @@ public class MoviesPresenter extends MoviesContract.Presenter implements
                     break;
 
                 default:
-                    movieQuery = mMovieRepository.getPopularMovies();
-                    break;
+                    throw new IllegalArgumentException("Unknown movie filter type");
             }
 
             mCompositeDisposable.add(movieQuery
@@ -100,7 +96,7 @@ public class MoviesPresenter extends MoviesContract.Presenter implements
     }
 
     private void loadFavoriteMovies() {
-        mMovieRepository.getFavoriteMovies(this, this);
+        mMovieRepository.getFavoriteMovies(this);
     }
 
     @Override
@@ -113,7 +109,7 @@ public class MoviesPresenter extends MoviesContract.Presenter implements
     public void onMovieFavoriteQueryComplete(int token, Object cookie, Cursor cursor) {
 
         //Parse favorites query result and display results if successful
-        List<Movie> favoriteMovies = QueryParseUtils.parseMovieFavoriteQuery(cursor);
+        List<Movie> favoriteMovies = new FavoriteMovieParser(cursor).parse();
         if(favoriteMovies != null){
             mMoviesView.displayMovies(favoriteMovies);
         }else {
@@ -121,6 +117,11 @@ public class MoviesPresenter extends MoviesContract.Presenter implements
         }
 
         cursor.close();
+    }
+
+    //Used for unit testing
+    public void setFilterType(String filterType) {
+        mFilterType = filterType;
     }
 
     //Implementation not needed

@@ -21,7 +21,7 @@ import com.codertal.moviehub.data.movies.Movie;
 import com.codertal.moviehub.R;
 import com.codertal.moviehub.features.movies.adapter.MovieGridAdapter;
 import com.codertal.moviehub.data.movies.MovieRepository;
-import com.codertal.moviehub.recievers.NetworkChangeBroadcastReceiver;
+import com.codertal.moviehub.features.movies.receiver.NetworkChangeBroadcastReceiver;
 
 import org.parceler.Parcels;
 
@@ -56,25 +56,21 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     MovieRepository mMovieRepository;
 
     public static final String SORT_TYPE = "SORT_TYPE";
-
-    private static final String SCROLL_POSITION = "scrollPosition";
     public static final String MOVIE_INFO = "movieInfo";
+    private static final String SCROLL_POSITION = "scrollPosition";
 
     private static final String NETWORK_ERROR = "NETWORK_ERROR";
     private static final String EMPTY_FAVORITES = "EMPTY_FAVORITES";
     private static final String EMPTY_MOVIES = "EMPTY_MOVIES";
     private static final String NO_ERROR = "NO_ERROR";
 
-    private Handler mHandler = new Handler();
-
-    private MovieGridAdapter mMovieGridAdapter;
-
-    private String mFilterType;
-    private GridLayoutManager mLayoutManager;
-
-    private NetworkChangeBroadcastReceiver mNetworkChangeBroadcastReceiver;
-
     private MoviesContract.Presenter mPresenter;
+
+    private Handler mHandler = new Handler();
+    private MovieGridAdapter mMovieGridAdapter;
+    private GridLayoutManager mLayoutManager;
+    private String mFilterType;
+    private NetworkChangeBroadcastReceiver mNetworkChangeBroadcastReceiver;
 
     public MoviesFragment() {}
 
@@ -144,8 +140,6 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
         super.onDestroyView();
         mPresenter.unsubscribe();
     }
-
-
 
     @Override
     public void onSaveInstanceState(Bundle outState) {

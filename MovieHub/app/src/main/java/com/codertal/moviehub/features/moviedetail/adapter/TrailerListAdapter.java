@@ -1,4 +1,4 @@
-package com.codertal.moviehub.adapters;
+package com.codertal.moviehub.features.moviedetail.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,7 +20,7 @@ public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.
 
     //Declare list item click listener for this adapter
     public interface ListItemClickListener{
-        public void onListItemClick(int position);
+        void onListItemClick(int position);
     }
 
     public TrailerListAdapter(ArrayList<Trailer> trailers, ListItemClickListener listItemClickListener,
@@ -72,7 +72,7 @@ public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.
         public TrailerViewHolder(View itemView){
             super(itemView);
 
-            mTrailerTitle = (TextView) itemView.findViewById(R.id.tv_trailer_title);
+            mTrailerTitle = itemView.findViewById(R.id.tv_trailer_title);
 
             //Set this instance as the on click listener for the item view
             itemView.setOnClickListener(this);

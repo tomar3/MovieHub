@@ -1,4 +1,4 @@
-package com.codertal.moviehub.recievers;
+package com.codertal.moviehub.features.movies.receiver;
 
 
 import android.content.BroadcastReceiver;
@@ -11,7 +11,7 @@ public class NetworkChangeBroadcastReceiver extends BroadcastReceiver{
 
     OnNetworkConnectedListener mOnNetworkConnectedListener;
     public interface OnNetworkConnectedListener{
-        public void onNetworkConnected();
+        void onNetworkConnected();
     }
 
     public NetworkChangeBroadcastReceiver(OnNetworkConnectedListener onNetworkConnectedListener){

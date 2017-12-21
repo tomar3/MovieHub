@@ -3,8 +3,9 @@ package com.codertal.moviehub.data.movies;
 import com.codertal.moviehub.BuildConfig;
 import com.codertal.moviehub.data.movies.local.LocalMovieService;
 import com.codertal.moviehub.data.movies.remote.RemoteMovieService;
-import com.codertal.moviehub.features.movies.favorites.MovieFavoritesContentObserver;
-import com.codertal.moviehub.tasks.MovieFavoritesQueryHandler;
+import com.codertal.moviehub.features.movies.favorites.FavoriteMoviesContentObserver;
+import com.codertal.moviehub.data.movies.local.task.MovieFavoritesQueryHandler;
+import com.codertal.moviehub.features.movies.favorites.FavoriteMoviesObserver;
 
 import io.reactivex.Single;
 
@@ -26,9 +27,8 @@ public class MovieRepository {
         return mRemoteMovieService.getTopRatedMovies(BuildConfig.MOVIE_DB_API_KEY);
     }
 
-    public void getFavoriteMovies(MovieFavoritesQueryHandler.OnMovieFavoriteQueryListener onMovieFavoriteQueryListener,
-                                  MovieFavoritesContentObserver.OnFavoritesChangeObserver onFavoritesChangeObserver) {
-        mLocalMovieService.getFavoriteMovies(onMovieFavoriteQueryListener, onFavoritesChangeObserver);
+    public void getFavoriteMovies(FavoriteMoviesObserver favoriteMoviesObserver) {
+        mLocalMovieService.getFavoriteMovies(favoriteMoviesObserver);
     }
 
     public void unregisterFavoritesObserver() {

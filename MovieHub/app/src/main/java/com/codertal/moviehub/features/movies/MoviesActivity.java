@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.codertal.moviehub.R;
+import com.codertal.moviehub.features.movies.adapter.MoviePagerAdapter;
 
 import javax.inject.Inject;
 
@@ -35,7 +36,7 @@ public class MoviesActivity extends AppCompatActivity implements HasSupportFragm
 
     private void setupViewPager(ViewPager viewPager) {
         //Add three fragment tabs for different filters
-        MovieGridViewPager adapter = new MovieGridViewPager(getSupportFragmentManager());
+        MoviePagerAdapter adapter = new MoviePagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new MoviesFragment(), MoviesFilterType.POPULAR);
         adapter.addFragment(new MoviesFragment(), MoviesFilterType.TOP_RATED);
         adapter.addFragment(new MoviesFragment(), MoviesFilterType.FAVORITES);

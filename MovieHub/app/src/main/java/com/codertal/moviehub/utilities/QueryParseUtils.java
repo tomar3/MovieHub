@@ -15,38 +15,7 @@ import java.util.List;
 
 public class QueryParseUtils {
 
-    public static List<Movie> parseMovieFavoriteQuery(Cursor cursor){
-        List<Movie> movies = new ArrayList<>(cursor.getCount());
 
-        if(cursor.getCount() < 1){
-           return null;
-        }else {
-
-            while (cursor.moveToNext()) {
-
-                //Store movie stats and info
-                movies.add(new Movie(
-                        cursor.getInt(
-                                cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID)),
-                        cursor.getDouble(
-                                cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_RATING)),
-                        cursor.getString(
-                                cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_TITLE)),
-                        cursor.getString(
-                                cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_URL)),
-                        cursor.getString(
-                                cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_BACKDROP_URL)),
-                        cursor.getString(
-                                cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_DESCR)),
-                        cursor.getString(
-                                cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_YEAR))
-                ));
-
-            }
-
-           return movies;
-        }
-    }
 
     public static boolean parseMovieDetailQuery(JSONObject movieDetailJSONResult, ArrayList<Trailer> trailers,
                                                 ArrayList<Review> reviews){

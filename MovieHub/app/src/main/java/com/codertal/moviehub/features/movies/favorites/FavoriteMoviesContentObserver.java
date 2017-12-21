@@ -4,14 +4,14 @@ import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Handler;
 
-public class MovieFavoritesContentObserver extends ContentObserver {
+public class FavoriteMoviesContentObserver extends ContentObserver {
     private OnFavoritesChangeObserver mFavoritesChangeObserver;
 
     public interface OnFavoritesChangeObserver{
         void onFavoritesContentChange(Uri uri);
     }
 
-    public MovieFavoritesContentObserver(Handler handler) {
+    public FavoriteMoviesContentObserver(Handler handler) {
         super(handler);
     }
 

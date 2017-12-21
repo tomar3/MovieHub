@@ -1,4 +1,4 @@
-package com.codertal.moviehub.features.movies;
+package com.codertal.moviehub.features.movies.adapter;
 
 
 import android.os.Bundle;
@@ -11,12 +11,12 @@ import com.codertal.moviehub.features.movies.MoviesFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MovieGridViewPager extends FragmentPagerAdapter {
+public class MoviePagerAdapter extends FragmentPagerAdapter {
 
     private final List<Fragment> mFragmentList = new ArrayList<>();
     private final List<String> mFragmentTitleList = new ArrayList<>();
 
-    public MovieGridViewPager(FragmentManager manager) {
+    public MoviePagerAdapter(FragmentManager manager) {
         super(manager);
     }
 

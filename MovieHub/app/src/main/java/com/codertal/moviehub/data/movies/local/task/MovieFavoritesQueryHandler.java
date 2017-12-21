@@ -1,4 +1,4 @@
-package com.codertal.moviehub.tasks;
+package com.codertal.moviehub.data.movies.local.task;
 
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;

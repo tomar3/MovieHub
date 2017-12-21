@@ -1,4 +1,4 @@
-package com.codertal.moviehub.adapters;
+package com.codertal.moviehub.features.moviedetail.adapter;
 
 import android.animation.ObjectAnimator;
 import android.support.v7.widget.RecyclerView;
