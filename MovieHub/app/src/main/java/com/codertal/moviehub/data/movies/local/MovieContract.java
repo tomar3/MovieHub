@@ -20,14 +20,13 @@ public class MovieContract {
         // Favorite Movies table and column names
         public static final String TABLE_NAME = "favorite_movies";
 
-
-        public static final String COLUMN_TITLE = "title";
-        public static final String COLUMN_RATING = "rating";
-        public static final String COLUMN_YEAR = "year";
-        public static final String COLUMN_DESCR = "descr";
-        public static final String COLUMN_POSTER_URL = "posterUrl";
-        public static final String COLUMN_BACKDROP_URL = "backdropUrl";
         public static final String COLUMN_MOVIE_ID = "movieID";
+        public static final String COLUMN_VOTE_AVERAGE = "voteAverage";
+        public static final String COLUMN_TITLE = "title";
+        public static final String COLUMN_POSTER_PATH = "posterPath";
+        public static final String COLUMN_BACKDROP_PATH = "backdropPath";
+        public static final String COLUMN_OVERVIEW = "overview";
+        public static final String COLUMN_YEAR = "year";
 
     }
 }

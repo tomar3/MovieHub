@@ -391,11 +391,11 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
         //Put the movie info into the ContentValues
         contentValues.put(MovieContract.MovieEntry.COLUMN_TITLE, mMovie.getTitle());
-        contentValues.put(MovieContract.MovieEntry.COLUMN_RATING, mMovie.getVoteAverage());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, mMovie.getVoteAverage());
         contentValues.put(MovieContract.MovieEntry.COLUMN_YEAR, mMovie.getReleaseDate());
-        contentValues.put(MovieContract.MovieEntry.COLUMN_DESCR, mMovie.getOverview());
-        contentValues.put(MovieContract.MovieEntry.COLUMN_POSTER_URL, mMovie.getPosterPath());
-        contentValues.put(MovieContract.MovieEntry.COLUMN_BACKDROP_URL, mMovie.getBackdropPath());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, mMovie.getOverview());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, mMovie.getPosterPath());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_BACKDROP_PATH, mMovie.getBackdropPath());
         contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, mMovie.getId().toString());
 
         //Insert the content values via a ContentResolver

@@ -30,15 +30,15 @@ public class FavoriteMovieParser {
                         mCursor.getInt(
                                 mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID)),
                         mCursor.getDouble(
-                                mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_RATING)),
+                                mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE)),
                         mCursor.getString(
                                 mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_TITLE)),
                         mCursor.getString(
-                                mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_URL)),
+                                mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH)),
                         mCursor.getString(
-                                mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_BACKDROP_URL)),
+                                mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_BACKDROP_PATH)),
                         mCursor.getString(
-                                mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_DESCR)),
+                                mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_OVERVIEW)),
                         mCursor.getString(
                                 mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_YEAR))
                 ));

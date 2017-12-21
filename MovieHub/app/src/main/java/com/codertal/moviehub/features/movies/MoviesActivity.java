@@ -40,6 +40,7 @@ public class MoviesActivity extends AppCompatActivity implements HasSupportFragm
         adapter.addFragment(new MoviesFragment(), MoviesFilterType.POPULAR);
         adapter.addFragment(new MoviesFragment(), MoviesFilterType.TOP_RATED);
         adapter.addFragment(new MoviesFragment(), MoviesFilterType.FAVORITES);
+
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(adapter.getCount());
     }
