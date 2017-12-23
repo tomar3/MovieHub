@@ -27,7 +27,7 @@ public class LocalMovieService {
         mMovieFavoritesQueryHandler.setMovieFavoriteQueryListener(favoriteMoviesObserver);
         mFavoritesContentObserver.setFavoritesChangeObserver(favoriteMoviesObserver);
 
-        mContentResolver.unregisterContentObserver(mFavoritesContentObserver);
+        unregsiterFavoritesObserver();
         mContentResolver.registerContentObserver(MovieContract.MovieEntry.CONTENT_URI,
                 false,
                 mFavoritesContentObserver);

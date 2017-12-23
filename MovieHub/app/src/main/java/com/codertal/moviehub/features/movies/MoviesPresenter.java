@@ -28,7 +28,9 @@ public class MoviesPresenter extends MoviesContract.Presenter implements Favorit
     private MoviesContract.View mMoviesView;
 
     private MovieRepository mMovieRepository;
+    private MoviesContract.State mState;
     private String mFilterType;
+    private boolean mMoviesDisplayed;
 
     public MoviesPresenter(@NonNull MoviesContract.View moviesView,
                            @NonNull MovieRepository movieRepository,
@@ -36,6 +38,17 @@ public class MoviesPresenter extends MoviesContract.Presenter implements Favorit
         mMoviesView = moviesView;
         mMovieRepository = movieRepository;
         mFilterType = filterType;
+        mMoviesDisplayed = false;
+    }
+
+    @Override
+    public void restoreState(MoviesContract.State state) {
+        mState = state;
+    }
+
+    @Override
+    public MoviesContract.State getState() {
+        return new MoviesState(mMoviesView.getLayoutManagerPosition());
     }
 
     @Override
@@ -81,7 +94,14 @@ public class MoviesPresenter extends MoviesContract.Presenter implements Favorit
                             if (movies.isEmpty()) {
                                 mMoviesView.displayEmptyMovies();
                             } else {
+                                //Display movies
                                 mMoviesView.displayMovies(movies);
+
+                                //Restore view state if exists
+                                if(mState != null){
+                                    mMoviesView.restoreLayoutManagerPosition(mState.getLastVisibleItemPosition());
+                                }
+                                mMoviesDisplayed = true;
                             }
                         }
 
@@ -95,8 +115,11 @@ public class MoviesPresenter extends MoviesContract.Presenter implements Favorit
         }
     }
 
-    private void loadFavoriteMovies() {
-        mMovieRepository.getFavoriteMovies(this);
+    @Override
+    void handleNetworkConnected() {
+        if(!mMoviesDisplayed){
+            loadMovies();
+        }
     }
 
     @Override
@@ -129,4 +152,8 @@ public class MoviesPresenter extends MoviesContract.Presenter implements Favorit
     public void onMovieFavoriteInsertComplete(int token, Object cookie, Uri uri) {}
     @Override
     public void onMovieFavoriteDeleteComplete(int token, Object cookie, int result) {}
+
+    private void loadFavoriteMovies() {
+        mMovieRepository.getFavoriteMovies(this);
+    }
 }

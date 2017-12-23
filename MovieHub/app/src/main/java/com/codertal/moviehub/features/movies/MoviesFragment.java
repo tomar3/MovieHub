@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,6 +35,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.support.AndroidSupportInjection;
+import timber.log.Timber;
 
 import static com.codertal.moviehub.features.movies.MoviesFilterType.FAVORITES;
 
@@ -56,8 +59,8 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     MovieRepository mMovieRepository;
 
     public static final String SORT_TYPE = "SORT_TYPE";
-    public static final String MOVIE_INFO = "movieInfo";
-    private static final String SCROLL_POSITION = "scrollPosition";
+    public static final String MOVIE_INFO = "MOVIE_INFO";
+    private static final String SCROLL_POSITION = "SCROLL_POSITION";
 
     private static final String NETWORK_ERROR = "NETWORK_ERROR";
     private static final String EMPTY_FAVORITES = "EMPTY_FAVORITES";
@@ -66,7 +69,6 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
 
     private MoviesContract.Presenter mPresenter;
 
-    private Handler mHandler = new Handler();
     private MovieGridAdapter mMovieGridAdapter;
     private GridLayoutManager mLayoutManager;
     private String mFilterType;
@@ -81,7 +83,7 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_movies_grid, container, false);
@@ -92,24 +94,11 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
 
         setUpMoviesRecycler();
 
-        //If creating from a saved state retrieve scroll position
-        final int scrollPosition;
-        if(savedInstanceState != null){
-            scrollPosition = savedInstanceState.getInt(SCROLL_POSITION);
-        }else{
-            scrollPosition = 0;
-        }
-
         //Populate grid with api query depending on sort type
         mFilterType = getArguments().getString(SORT_TYPE);
         mPresenter = new MoviesPresenter(this, mMovieRepository, mFilterType);
 
         mPresenter.loadMovies();
-
-        //Restore scroll position if previously saved
-        if(scrollPosition != 0){
-            mHandler.postDelayed(() -> mMoviesRecycler.scrollToPosition(scrollPosition), 200);
-        }
 
         if(!mFilterType.equals(FAVORITES)){
             mNetworkChangeBroadcastReceiver = new NetworkChangeBroadcastReceiver(this);
@@ -121,7 +110,7 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     @Override
     public void onResume(){
         super.onResume();
-        if(!mFilterType.equals(FAVORITES)) {
+        if(mNetworkChangeBroadcastReceiver != null && getContext() != null) {
             getContext().registerReceiver(mNetworkChangeBroadcastReceiver,
                     new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
         }
@@ -130,7 +119,7 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     @Override
     public void onPause(){
         super.onPause();
-        if(!mFilterType.equals(FAVORITES)) {
+        if(mNetworkChangeBroadcastReceiver != null && getContext() != null) {
             getContext().unregisterReceiver(mNetworkChangeBroadcastReceiver);
         }
     }
@@ -142,10 +131,29 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        //Save scroll position
-        outState.putInt(SCROLL_POSITION, mLayoutManager.findLastVisibleItemPosition());
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        writeToBundle(outState, mPresenter.getState());
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if(savedInstanceState != null) {
+            mPresenter.restoreState(readFromBundle(savedInstanceState));
+        }
+    }
+
+    @Override
+    public void writeToBundle(Bundle outState, MoviesContract.State state) {
+        outState.putInt(SCROLL_POSITION, state.getLastVisibleItemPosition());
+    }
+
+    @Override
+    public MoviesContract.State readFromBundle(@NonNull Bundle savedInstanceState) {
+        int lastVisibleItemPosition = savedInstanceState.getInt(SCROLL_POSITION);
+
+        return new MoviesState(lastVisibleItemPosition);
     }
 
     @Override
@@ -181,6 +189,16 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     }
 
     @Override
+    public int getLayoutManagerPosition() {
+        return mLayoutManager.findLastVisibleItemPosition();
+    }
+
+    @Override
+    public void restoreLayoutManagerPosition(int layoutManagerPosition) {
+        mMoviesRecycler.postDelayed(() -> mMoviesRecycler.scrollToPosition(layoutManagerPosition), 200);
+    }
+
+    @Override
     public void onMovieClick(Movie movie){
         //Start detail activity and pass it information about the chosen movie
         Intent detailIntent = new Intent(getContext(), MovieDetailActivity.class);
@@ -193,19 +211,7 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
 
     @Override
     public void onNetworkConnected() {
-        makeMovieSearchQuery();
-    }
-
-    private void makeMovieSearchQuery() {
-
-//            //Check if connected to internet before attempting to load
-//            if(NetworkUtils.isNetworkAvailable(getContext())) {
-//                getActivity().getSupportLoaderManager().restartLoader(MOVIES_SEARCH_LOADER, urlBundle,
-//                        MoviesFragment.this);
-//            }else {
-//                displayResults(false, NETWORK_ERROR);
-//            }
-//        }
+        mPresenter.handleNetworkConnected();
     }
 
     private void displayResults(boolean success, String errorType){

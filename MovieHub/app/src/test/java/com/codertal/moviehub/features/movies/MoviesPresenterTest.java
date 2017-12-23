@@ -26,6 +26,7 @@ import static com.codertal.moviehub.features.movies.MoviesFilterType.FAVORITES;
 import static com.codertal.moviehub.features.movies.MoviesFilterType.POPULAR;
 import static com.codertal.moviehub.features.movies.MoviesFilterType.TOP_RATED;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -42,6 +43,7 @@ public class MoviesPresenterTest {
 
     private MoviesPresenter moviesPresenter;
     private MoviesResponse MANY_MOVIES, EMPTY_MOVIES;
+    private MoviesState MOVIES_STATE;
 
 
     @Before
@@ -53,6 +55,8 @@ public class MoviesPresenterTest {
 
         EMPTY_MOVIES = new MoviesResponse();
         EMPTY_MOVIES.setResults(Collections.emptyList());
+
+        MOVIES_STATE = new MoviesState(1);
 
         RxJavaPlugins.setIoSchedulerHandler(__ -> Schedulers.trampoline());
         RxAndroidPlugins.setInitMainThreadSchedulerHandler(__ -> Schedulers.trampoline());
@@ -135,5 +139,32 @@ public class MoviesPresenterTest {
         moviesPresenter.unsubscribe();
 
         verify(movieRepository).unregisterFavoritesObserver();
+    }
+
+    @Test
+    public void handleNetworkConnected_WhenMoviesNotPreviouslyDisplayed_ShouldDisplayMovies() {
+        when(movieRepository.getPopularMovies()).thenReturn(Single.just(MANY_MOVIES));
+
+        moviesPresenter.handleNetworkConnected();
+
+        verify(moviesView).displayMovies(MANY_MOVIES.getResults());
+    }
+
+    @Test
+    public void handleNetworkConnected_WhenMoviesAlreadyDisplayed_ShouldNotDisplayMoviesAgain() {
+        when(movieRepository.getPopularMovies()).thenReturn(Single.just(MANY_MOVIES));
+
+        moviesPresenter.loadMovies();
+        moviesPresenter.handleNetworkConnected();
+
+        verify(moviesView, times(1)).displayMovies(MANY_MOVIES.getResults());
+    }
+
+    @Test
+    public void getState_ShouldGetLayoutManagerPosition() {
+
+        moviesPresenter.getState();
+
+        verify(moviesView).getLayoutManagerPosition();
     }
 }
