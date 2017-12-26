@@ -99,7 +99,7 @@ public class MoviesPresenter extends MoviesContract.Presenter implements Favorit
 
                                 //Restore view state if exists
                                 if(mState != null){
-                                    mMoviesView.restoreLayoutManagerPosition(mState.getLastVisibleItemPosition());
+                                    mMoviesView.restoreLayoutManagerPosition(mState.getVisibleItemPosition());
                                 }
                                 mMoviesDisplayed = true;
                             }

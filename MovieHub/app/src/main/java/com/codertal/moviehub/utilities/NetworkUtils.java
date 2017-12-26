@@ -29,8 +29,6 @@ public class NetworkUtils {
     private final static String YOUTUBE_PARAM_QUERY = "v";
 
 
-
-
     public static String buildPosterUrl(String imageExtension) {
         //Append the image extension path to the base url for images
         return MOVIE_IMAGE_BASE_URL + "/" + imageExtension;
@@ -39,16 +37,6 @@ public class NetworkUtils {
     public static String buildBackdropUrl(String imageExtension) {
         //Append the image extension path to the base url for images
         return MOVIE_IMAGE_BASE_BACKDROP_URL + "/" + imageExtension;
-    }
-
-
-    public static String buildSearchUrl(String baseURL){
-        //Build the base url with the api key
-        Uri builtUri = Uri.parse(baseURL).buildUpon()
-                .appendQueryParameter(PARAM_QUERY, BuildConfig.MOVIE_DB_API_KEY)
-                .build();
-
-        return builtUri.toString();
     }
 
     public static URL buildMovieDetailUrl(String movieId){
@@ -98,14 +86,6 @@ public class NetworkUtils {
         } finally {
             urlConnection.disconnect();
         }
-    }
-
-    public static String getMovieSearchPopularUrl() {
-        return MOVIE_SEARCH_POPULAR_URL;
-    }
-
-    public static String getMovieSearchTopUrl() {
-        return MOVIE_SEARCH_TOP_URL;
     }
 
     public static boolean isNetworkAvailable(Context context) {

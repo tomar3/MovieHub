@@ -22,12 +22,12 @@ public class LocalMovieService {
     }
 
     public void getFavoriteMovies(FavoriteMoviesObserver favoriteMoviesObserver) {
+        unregisterFavoritesObserver();
 
         //Initialize components for communicating with content provider
         mMovieFavoritesQueryHandler.setMovieFavoriteQueryListener(favoriteMoviesObserver);
         mFavoritesContentObserver.setFavoritesChangeObserver(favoriteMoviesObserver);
 
-        unregsiterFavoritesObserver();
         mContentResolver.registerContentObserver(MovieContract.MovieEntry.CONTENT_URI,
                 false,
                 mFavoritesContentObserver);
@@ -40,7 +40,7 @@ public class LocalMovieService {
                 null);
     }
 
-    public void unregsiterFavoritesObserver() {
+    public void unregisterFavoritesObserver() {
         mContentResolver.unregisterContentObserver(mFavoritesContentObserver);
     }
 }

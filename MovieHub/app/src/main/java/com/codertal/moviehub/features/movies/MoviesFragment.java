@@ -6,7 +6,6 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -122,6 +121,12 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
         if(mNetworkChangeBroadcastReceiver != null && getContext() != null) {
             getContext().unregisterReceiver(mNetworkChangeBroadcastReceiver);
         }
+
+
+        //TODO: SEE IF THIS TRULY FIXED THE CONTENT OBSERVER LEAK
+        if(mFilterType.equals(FAVORITES)){
+            mPresenter.unsubscribe();
+        }
     }
 
     @Override
@@ -146,14 +151,14 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
 
     @Override
     public void writeToBundle(Bundle outState, MoviesContract.State state) {
-        outState.putInt(SCROLL_POSITION, state.getLastVisibleItemPosition());
+        outState.putInt(SCROLL_POSITION, state.getVisibleItemPosition());
     }
 
     @Override
     public MoviesContract.State readFromBundle(@NonNull Bundle savedInstanceState) {
-        int lastVisibleItemPosition = savedInstanceState.getInt(SCROLL_POSITION);
+        int visibleItemPosition = savedInstanceState.getInt(SCROLL_POSITION);
 
-        return new MoviesState(lastVisibleItemPosition);
+        return new MoviesState(visibleItemPosition);
     }
 
     @Override
@@ -190,7 +195,7 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
 
     @Override
     public int getLayoutManagerPosition() {
-        return mLayoutManager.findLastVisibleItemPosition();
+        return mLayoutManager.findFirstVisibleItemPosition();
     }
 
     @Override

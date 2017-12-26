@@ -20,7 +20,7 @@ public class NetworkChangeBroadcastReceiver extends BroadcastReceiver{
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (NetworkUtils.isNetworkAvailable(context)) {
+        if (NetworkUtils.isNetworkAvailable(context.getApplicationContext())) {
             mOnNetworkConnectedListener.onNetworkConnected();
         }
     }

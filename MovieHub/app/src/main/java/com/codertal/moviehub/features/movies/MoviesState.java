@@ -2,14 +2,14 @@ package com.codertal.moviehub.features.movies;
 
 public class MoviesState implements MoviesContract.State {
 
-    private final int lastVisibleItemPosition;
+    private final int visibleItemPosition;
 
-    public MoviesState(int lastVisibleItemPosition) {
-        this.lastVisibleItemPosition = lastVisibleItemPosition;
+    public MoviesState(int visibleItemPosition) {
+        this.visibleItemPosition = visibleItemPosition;
     }
 
     @Override
-    public int getLastVisibleItemPosition() {
-        return lastVisibleItemPosition;
+    public int getVisibleItemPosition() {
+        return visibleItemPosition;
     }
 }

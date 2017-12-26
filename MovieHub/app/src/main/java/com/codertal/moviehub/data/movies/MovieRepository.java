@@ -3,8 +3,6 @@ package com.codertal.moviehub.data.movies;
 import com.codertal.moviehub.BuildConfig;
 import com.codertal.moviehub.data.movies.local.LocalMovieService;
 import com.codertal.moviehub.data.movies.remote.RemoteMovieService;
-import com.codertal.moviehub.features.movies.favorites.FavoriteMoviesContentObserver;
-import com.codertal.moviehub.data.movies.local.task.MovieFavoritesQueryHandler;
 import com.codertal.moviehub.features.movies.favorites.FavoriteMoviesObserver;
 
 import io.reactivex.Single;
@@ -32,6 +30,6 @@ public class MovieRepository {
     }
 
     public void unregisterFavoritesObserver() {
-        mLocalMovieService.unregsiterFavoritesObserver();
+        mLocalMovieService.unregisterFavoritesObserver();
     }
 }

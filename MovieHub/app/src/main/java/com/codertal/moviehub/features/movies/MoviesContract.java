@@ -31,7 +31,7 @@ public interface MoviesContract {
 
     interface State extends BaseState {
 
-        int getLastVisibleItemPosition();
+        int getVisibleItemPosition();
 
     }
 }
