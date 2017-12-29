@@ -26,7 +26,7 @@
             android:label="@string/movie_detail_title" />
 
         <provider
-            android:name="com.codertal.moviehub.data.movies.local.MovieContentProvider"
+            android:name=".data.movies.local.MovieContentProvider"
             android:authorities="com.codertal.moviehub"
             android:exported="false"/>
     </application>

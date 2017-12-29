@@ -9,9 +9,9 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +32,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.codertal.moviehub.data.movies.MovieRepository;
+import com.codertal.moviehub.data.videos.model.Video;
 import com.codertal.moviehub.features.movies.favorites.FavoriteSnackbarListener;
 import com.codertal.moviehub.GlideApp;
 import com.codertal.moviehub.R;
@@ -39,52 +41,74 @@ import com.codertal.moviehub.features.moviedetail.adapter.ReviewListAdapter;
 import com.codertal.moviehub.features.moviedetail.adapter.TrailerListAdapter;
 import com.codertal.moviehub.data.movies.local.MovieContract;
 import com.codertal.moviehub.features.movies.MoviesFragment;
-import com.codertal.moviehub.data.movies.Movie;
-import com.codertal.moviehub.data.reviews.Review;
-import com.codertal.moviehub.data.trailers.Trailer;
+import com.codertal.moviehub.data.movies.model.Movie;
+import com.codertal.moviehub.data.reviews.model.Review;
 import com.codertal.moviehub.features.movies.receiver.NetworkChangeBroadcastReceiver;
 import com.codertal.moviehub.data.movies.local.task.MovieFavoritesQueryHandler;
-import com.codertal.moviehub.tasks.MovieDetailsQueryLoader;
 import com.codertal.moviehub.utilities.NetworkUtils;
-import com.codertal.moviehub.utilities.QueryParseUtils;
 
 import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.android.AndroidInjection;
 
 
 public class MovieDetailActivity extends AppCompatActivity implements
+        MovieDetailContract.View,
         TrailerListAdapter.ListItemClickListener,
-        LoaderManager.LoaderCallbacks<String>,
         MovieFavoritesQueryHandler.OnMovieFavoriteQueryListener,
         FavoriteSnackbarListener.OnFavoriteSnackbarClickListener,
         NetworkChangeBroadcastReceiver.OnNetworkConnectedListener{
 
-    @BindView(R.id.tv_year) TextView year;
-    @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.tv_rating) TextView rating;
-    @BindView(R.id.tv_overview) TextView overview;
-    @BindView(R.id.tv_title) TextView title;
-    @BindView(R.id.fab_fav) FloatingActionButton fabFavorite;
-    @BindView(R.id.iv_movie_thumb) ImageView movieThumbnail;
-    @BindView(R.id.iv_movie_background) ImageView movieBackground;
-    @BindView(R.id.ib_play_trailer) ImageButton playTrailerButton;
-    @BindView(R.id.sv_detail) ScrollView mScrollView;
+    @BindView(R.id.tv_year)
+    TextView year;
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
+    @BindView(R.id.tv_rating)
+    TextView rating;
+
+    @BindView(R.id.tv_overview)
+    TextView overview;
+
+    @BindView(R.id.tv_title)
+    TextView title;
+
+    @BindView(R.id.fab_fav)
+    FloatingActionButton fabFavorite;
+
+    @BindView(R.id.iv_movie_thumb)
+    ImageView movieThumbnail;
+
+    @BindView(R.id.iv_movie_background)
+    ImageView movieBackground;
+
+    @BindView(R.id.ib_play_trailer)
+    ImageButton playTrailerButton;
+
+    @BindView(R.id.sv_detail)
+    ScrollView mScrollView;
+
+    @Inject
+    MovieRepository mMovieRepository;
 
     private static final String EXPANDED_POSITIONS_KEY = "expandedPositions";
     private static final String SCROLL_POSITION_KEY = "scrollPosition";
-    public static final String MOVIE_ID_KEY = "movieId";
-    private static final int MOVIE_DETAIL_LOADER = 11;
     private static final int MOVIE_FAV_QUERY = 10;
     private static final int MOVIE_FAV_INSERT = 9;
     private static final int MOVIE_FAV_DELETE = 8;
 
+    private MovieDetailContract.Presenter mPresenter;
     private ArrayList<Review> mReviews;
-    private ArrayList<Trailer> mTrailers;
+    private ArrayList<Video> mTrailers;
 
     private TrailerListAdapter mTrailerListAdapter;
     private ReviewListAdapter mReviewListAdapter;
@@ -93,12 +117,11 @@ public class MovieDetailActivity extends AppCompatActivity implements
     private MovieFavoritesQueryHandler movieFavoritesQueryHandler;
     private MenuItem mShareMenuItem;
     private NetworkChangeBroadcastReceiver mNetworkChangeBroadcastReceiver;
-    private boolean mIsFavorited;
-    private boolean mHitSnackbar;
-    private boolean mNetworkErrorShown;
+    private boolean mIsFavorited, mHitSnackbar, mNetworkErrorShown;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
         ButterKnife.bind(this);
@@ -123,6 +146,10 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
             //Set the views based on the passed data
             mMovie = Parcels.unwrap(incomingIntent.getParcelableExtra(MoviesFragment.MOVIE_INFO));
+
+            mPresenter = new MovieDetailPresenter(this, mMovie.getId().toString(), mMovieRepository);
+
+            mPresenter.loadMovieDetails();
 
             //Use Glide to load the poster url
             GlideApp.with(this)
@@ -158,8 +185,8 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
 
             View emptyTrailersInclude = trailerSectionInclude.findViewById(R.id.empty_view_include);
-            TextView emptyTrailersView = (TextView) emptyTrailersInclude.findViewById(R.id.tv_empty_view);
-            TextView trailerSectionTitle = (TextView) trailerSectionInclude.findViewById(R.id.tv_card_header);
+            TextView emptyTrailersView = emptyTrailersInclude.findViewById(R.id.tv_empty_view);
+            TextView trailerSectionTitle = trailerSectionInclude.findViewById(R.id.tv_card_header);
             trailerSectionTitle.setText(getString(R.string.trailers_header));
             emptyTrailersView.setText(getString(R.string.empty_trailers));
 
@@ -169,8 +196,8 @@ public class MovieDetailActivity extends AppCompatActivity implements
             trailerList.setNestedScrollingEnabled(false);
 
             View emptyReviewsInclude = reviewSectionInclude.findViewById(R.id.empty_view_include);
-            TextView emptyReviewsView = (TextView) emptyReviewsInclude.findViewById(R.id.tv_empty_view);
-            TextView reviewSectionTitle = (TextView) reviewSectionInclude.findViewById(R.id.tv_card_header);
+            TextView emptyReviewsView = emptyReviewsInclude.findViewById(R.id.tv_empty_view);
+            TextView reviewSectionTitle = reviewSectionInclude.findViewById(R.id.tv_card_header);
             reviewSectionTitle.setText(getString(R.string.reviews_header));
             emptyReviewsView.setText(getString(R.string.empty_reviews));
 
@@ -186,11 +213,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
                 if(savedInstanceState.containsKey(SCROLL_POSITION_KEY)){
                     final int[] position = savedInstanceState.getIntArray(SCROLL_POSITION_KEY);
                     if(position != null)
-                        mScrollView.post(new Runnable() {
-                            public void run() {
-                                mScrollView.scrollTo(position[0], position[1]);
-                            }
-                        });
+                        mScrollView.post(() -> mScrollView.scrollTo(position[0], position[1]));
                 }
             }
 
@@ -198,8 +221,6 @@ public class MovieDetailActivity extends AppCompatActivity implements
             reviewList.setAdapter(mReviewListAdapter);
             reviewList.setNestedScrollingEnabled(false);
 
-
-            makeMovieDetailQuery();
             setSupportActionBar(toolbar);
 
             checkIfFavorited();
@@ -229,7 +250,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
             //Share the first trailer video if it exists
             if(!mTrailers.isEmpty()){
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                String youtubeTrailerUrl = Uri.parse(NetworkUtils.buildYouTubeUrl(mTrailers.get(0).key)).toString();
+                String youtubeTrailerUrl = Uri.parse(NetworkUtils.buildYouTubeUrl(mTrailers.get(0).getKey())).toString();
                 shareIntent.putExtra(Intent.EXTRA_TEXT,
                                 getString(R.string.share_content_start)
                                 + " " + mMovie.getTitle() + "\n\n"
@@ -277,30 +298,43 @@ public class MovieDetailActivity extends AppCompatActivity implements
         }
     }
 
-    private void makeMovieDetailQuery(){
-        Bundle movieIdBundle = new Bundle();
-        movieIdBundle.putString(MOVIE_ID_KEY, mMovie.getId().toString());
-        getSupportLoaderManager().restartLoader(MOVIE_DETAIL_LOADER, movieIdBundle, MovieDetailActivity.this);
+    @Override
+    public void displayVideos(@NonNull List<Video> videos) {
+        mTrailerListAdapter.updateData(videos);
+
+        //Use Glide to load the backdrop url
+        GlideApp.with(this)
+                .load(NetworkUtils.buildBackdropUrl(mMovie.getBackdropPath()))
+                .error(R.drawable.error_placeholder)
+                .placeholder(R.drawable.loading_image)
+                .centerCrop()
+                .into(movieBackground);
+
+        if(videos.isEmpty()){
+            playTrailerButton.setVisibility(View.GONE);
+        }
     }
+
+    @Override
+    public void displayReviews(@NonNull List<Review> reviews) {
+        mReviewListAdapter.updateData(reviews);
+    }
+
+
 
     @Override
     public void onListItemClick(int position) {
-        String trailerKey = mTrailers.get(position).key;
+        String trailerKey = mTrailers.get(position).getKey();
         launchTrailerIntent(trailerKey);
     }
 
-    @Override
-    public Loader<String> onCreateLoader(int id, Bundle args) {
-        return new MovieDetailsQueryLoader(this, args);
-    }
 
-    @Override
     public void onLoadFinished(Loader<String> loader, String data) {
         if(data != null) {
             try {
                 //Load the movie information from the returned JSON object
                 JSONObject movieDetailJsonResult = new JSONObject(data);
-                loadMovieDetails(movieDetailJsonResult);
+                //loadMovieDetails(movieDetailJsonResult);
                 displayNetworkError(false);
 
             } catch (Throwable t) {
@@ -314,10 +348,6 @@ public class MovieDetailActivity extends AppCompatActivity implements
     }
 
 
-    @Override
-    public void onLoaderReset(Loader<String> loader) {
-
-    }
 
     private void displayNetworkError(boolean isError){
 
@@ -351,30 +381,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
         }
     }
 
-    private void loadMovieDetails(JSONObject movieDetailJSONResult){
 
-        mTrailers.clear();
-        mReviews.clear();
-
-        //If parse of movie detail json successful, load results
-        if(QueryParseUtils.parseMovieDetailQuery(movieDetailJSONResult, mTrailers, mReviews)){
-
-            mTrailerListAdapter.updateData(mTrailers);
-            mReviewListAdapter.updateData(mReviews);
-
-            if(mTrailers.isEmpty()){
-                playTrailerButton.setVisibility(View.GONE);
-            }
-
-            //Use Glide to load the backdrop url
-            GlideApp.with(this)
-                    .load(NetworkUtils.buildBackdropUrl(mMovie.getBackdropPath()))
-                    .error(R.drawable.error_placeholder)
-                    .placeholder(R.drawable.loading_image)
-                    .centerCrop()
-                    .into(movieBackground);
-        }
-    }
 
     private void checkIfFavorited(){
         movieFavoritesQueryHandler.startQuery(MOVIE_FAV_QUERY, null,
@@ -496,7 +503,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
     public void onTrailerPlayButtonClick(View v){
         //Launch first available trailer if user clicked play button on backdrop photo
         if(!mTrailers.isEmpty()){
-            launchTrailerIntent(mTrailers.get(0).key);
+            launchTrailerIntent(mTrailers.get(0).getKey());
         }
     }
 
@@ -516,7 +523,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
     public void onNetworkConnected() {
         //Only restart query if coming from network error
         if(mNetworkErrorShown) {
-            makeMovieDetailQuery();
+           // makeMovieDetailQuery();
         }
     }
 }

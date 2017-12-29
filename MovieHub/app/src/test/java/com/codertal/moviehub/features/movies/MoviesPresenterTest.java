@@ -1,10 +1,8 @@
 package com.codertal.moviehub.features.movies;
 
-import com.codertal.moviehub.data.movies.Movie;
+import com.codertal.moviehub.data.movies.model.Movie;
 import com.codertal.moviehub.data.movies.MovieRepository;
-import com.codertal.moviehub.data.movies.MoviesResponse;
-import com.codertal.moviehub.utilities.FavoriteMovieParser;
-import com.codertal.moviehub.utilities.QueryParseUtils;
+import com.codertal.moviehub.data.movies.model.MoviesResponse;
 
 import org.junit.After;
 import org.junit.Before;

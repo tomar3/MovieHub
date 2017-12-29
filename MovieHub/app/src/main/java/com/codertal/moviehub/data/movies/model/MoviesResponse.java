@@ -1,4 +1,4 @@
-package com.codertal.moviehub.data.movies;
+package com.codertal.moviehub.data.movies.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

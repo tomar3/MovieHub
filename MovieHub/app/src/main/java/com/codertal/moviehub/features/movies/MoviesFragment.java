@@ -18,7 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.codertal.moviehub.features.moviedetail.MovieDetailActivity;
-import com.codertal.moviehub.data.movies.Movie;
+import com.codertal.moviehub.data.movies.model.Movie;
 import com.codertal.moviehub.R;
 import com.codertal.moviehub.features.movies.adapter.MovieGridAdapter;
 import com.codertal.moviehub.data.movies.MovieRepository;
@@ -34,7 +34,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.support.AndroidSupportInjection;
-import timber.log.Timber;
 
 import static com.codertal.moviehub.features.movies.MoviesFilterType.FAVORITES;
 

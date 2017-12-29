@@ -4,9 +4,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
-import com.codertal.moviehub.data.movies.Movie;
+import com.codertal.moviehub.data.movies.model.Movie;
 import com.codertal.moviehub.data.movies.MovieRepository;
-import com.codertal.moviehub.data.movies.MoviesResponse;
+import com.codertal.moviehub.data.movies.model.MoviesResponse;
 import com.codertal.moviehub.features.movies.favorites.FavoriteMoviesObserver;
 import com.codertal.moviehub.utilities.FavoriteMovieParser;
 

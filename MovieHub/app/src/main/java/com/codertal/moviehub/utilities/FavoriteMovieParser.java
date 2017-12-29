@@ -3,7 +3,7 @@ package com.codertal.moviehub.utilities;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 
-import com.codertal.moviehub.data.movies.Movie;
+import com.codertal.moviehub.data.movies.model.Movie;
 import com.codertal.moviehub.data.movies.local.MovieContract;
 
 import java.util.ArrayList;

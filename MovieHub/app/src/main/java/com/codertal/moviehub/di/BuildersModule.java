@@ -1,5 +1,6 @@
 package com.codertal.moviehub.di;
 
+import com.codertal.moviehub.features.moviedetail.MovieDetailActivity;
 import com.codertal.moviehub.features.movies.MoviesActivity;
 import com.codertal.moviehub.data.modules.MoviesModule;
 import com.codertal.moviehub.features.movies.MoviesFragment;
@@ -18,5 +19,8 @@ public abstract class BuildersModule {
 
     @ContributesAndroidInjector(modules = MoviesModule.class)
     abstract MoviesFragment bindMoviesFragment();
+
+    @ContributesAndroidInjector(modules = MoviesModule.class)
+    abstract MovieDetailActivity bindMovieDetailActivity();
 
 }

@@ -8,15 +8,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.codertal.moviehub.data.reviews.Review;
+import com.codertal.moviehub.data.reviews.model.Review;
 import com.codertal.moviehub.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.ReviewViewHolder>{
 
     private int mNumberOfItems;
-    private ArrayList<Review> mReviews;
+    private List<Review> mReviews;
     private TextView mEmptyReviewsView;
     private ArrayList<Integer> mExpandedViewPositions;
 
@@ -41,25 +42,22 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
     @Override
     public void onBindViewHolder(final ReviewViewHolder holder, int position) {
         final int itemPosition = position;
-        String author = mReviews.get(position).author;
-        String content = mReviews.get(position).content;
+        String author = mReviews.get(position).getAuthor();
+        String content = mReviews.get(position).getContent();
 
         holder.mReviewAuthor.setText(author);
         holder.mReviewContent.setText(content);
 
-        holder.mReviewContent.post(new Runnable() {
-            @Override
-            public void run() {
+        holder.mReviewContent.post(() -> {
 
-                //Hide the expand arrow if the text view is short
-                if(holder.mReviewContent.getLineCount() <= holder.mReviewContent.getMaxLines()){
-                    holder.mExpandArrow.setVisibility(View.INVISIBLE);
-                }
+            //Hide the expand arrow if the text view is short
+            if(holder.mReviewContent.getLineCount() <= holder.mReviewContent.getMaxLines()){
+                holder.mExpandArrow.setVisibility(View.INVISIBLE);
+            }
 
-                //Restore expanded state if previously saved
-                if(mExpandedViewPositions.contains(itemPosition)){
-                    holder.expandTextView(true);
-                }
+            //Restore expanded state if previously saved
+            if(mExpandedViewPositions.contains(itemPosition)){
+                holder.expandTextView(true);
             }
         });
 
@@ -79,7 +77,7 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
         return mNumberOfItems;
     }
 
-    public void updateData(ArrayList<Review> reviews){
+    public void updateData(List<Review> reviews){
         mReviews = reviews;
         mNumberOfItems = reviews.size();
         this.notifyDataSetChanged();

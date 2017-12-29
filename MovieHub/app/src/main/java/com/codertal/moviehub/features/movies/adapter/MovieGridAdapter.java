@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.codertal.moviehub.GlideApp;
 import com.codertal.moviehub.R;
-import com.codertal.moviehub.data.movies.Movie;
+import com.codertal.moviehub.data.movies.model.Movie;
 import com.codertal.moviehub.utilities.NetworkUtils;
 
 import java.util.List;

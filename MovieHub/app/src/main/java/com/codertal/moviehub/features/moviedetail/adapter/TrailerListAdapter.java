@@ -7,15 +7,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.codertal.moviehub.R;
-import com.codertal.moviehub.data.trailers.Trailer;
+import com.codertal.moviehub.data.videos.model.Video;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.TrailerViewHolder>{
 
     final private ListItemClickListener mOnListItemClickListener;
     private int mNumberOfItems;
-    private ArrayList<Trailer> mTrailers;
+    private List<Video> mVideos;
     private TextView mEmptyTrailersView;
 
     //Declare list item click listener for this adapter
@@ -23,10 +23,10 @@ public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.
         void onListItemClick(int position);
     }
 
-    public TrailerListAdapter(ArrayList<Trailer> trailers, ListItemClickListener listItemClickListener,
+    public TrailerListAdapter(List<Video> videos, ListItemClickListener listItemClickListener,
                               TextView emptyTrailersView){
-        mNumberOfItems = trailers.size();
-        mTrailers = trailers;
+        mNumberOfItems = videos.size();
+        mVideos = videos;
         mEmptyTrailersView = emptyTrailersView;
 
         //Use detail activity for the list item click listener
@@ -44,7 +44,7 @@ public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.
 
     @Override
     public void onBindViewHolder(TrailerViewHolder holder, int position) {
-        holder.mTrailerTitle.setText(mTrailers.get(position).title);
+        holder.mTrailerTitle.setText(mVideos.get(position).getName());
     }
 
     @Override
@@ -58,9 +58,9 @@ public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.
         return mNumberOfItems;
     }
 
-    public void updateData(ArrayList<Trailer> trailerTitles){
-        mTrailers = trailerTitles;
-        mNumberOfItems = mTrailers.size();
+    public void updateData(List<Video> trailerTitles){
+        mVideos = trailerTitles;
+        mNumberOfItems = mVideos.size();
         this.notifyDataSetChanged();
     }
 
