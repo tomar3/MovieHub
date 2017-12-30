@@ -139,9 +139,9 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/activity_detail_spacing"
         android:clickable="true"
+        android:focusable="true"
         android:src="@drawable/ic_action_favorite_unfilled"
         android:tint="@android:color/holo_red_light"
-        android:onClick="onFavButtonClick"
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|right|end"/>
 

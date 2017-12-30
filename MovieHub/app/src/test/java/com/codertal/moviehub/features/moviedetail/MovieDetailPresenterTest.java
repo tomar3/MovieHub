@@ -1,6 +1,7 @@
 package com.codertal.moviehub.features.moviedetail;
 
 import com.codertal.moviehub.data.movies.MovieRepository;
+import com.codertal.moviehub.data.movies.model.Movie;
 import com.codertal.moviehub.data.movies.model.MovieDetailResponse;
 import com.codertal.moviehub.data.reviews.model.Review;
 import com.codertal.moviehub.data.reviews.model.ReviewsResponse;
@@ -16,12 +17,14 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import io.reactivex.Single;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,12 +42,15 @@ public class MovieDetailPresenterTest {
     private MovieDetailPresenter movieDetailPresenter;
     private String MOVIE_ID;
     private MovieDetailResponse MOVIE_DETAILS;
+    private Movie MOVIE;
 
 
     @Before
     public void setUp() {
         MOVIE_ID = "1";
-        movieDetailPresenter = new MovieDetailPresenter(movieDetailView, MOVIE_ID, movieRepository);
+        MOVIE = new Movie(1, 7.8, "Title", "posterPath", "backdropPath",
+                "overview", "2017");
+        movieDetailPresenter = new MovieDetailPresenter(movieDetailView, MOVIE, movieRepository, null);
         MOVIE_DETAILS = new MovieDetailResponse();
 
         VideosResponse videosResponse = new VideosResponse();
@@ -66,8 +72,17 @@ public class MovieDetailPresenterTest {
     }
 
     @Test
+    public void loadMovieDetails_ShouldDisplayMovieDetails() {
+        when(movieRepository.getMovieDetails(MOVIE.getId().toString())).thenReturn(Single.just(MOVIE_DETAILS));
+
+        movieDetailPresenter.loadMovieDetails();
+
+        verify(movieDetailView).displayMovieDetails(MOVIE);
+    }
+
+    @Test
     public void loadMovieDetails_WhenNetworkReturnsVideosForMovie_ShouldDisplayVideos() {
-        when(movieRepository.getMovieDetails(MOVIE_ID)).thenReturn(Single.just(MOVIE_DETAILS));
+        when(movieRepository.getMovieDetails(MOVIE.getId().toString())).thenReturn(Single.just(MOVIE_DETAILS));
 
         movieDetailPresenter.loadMovieDetails();
 
@@ -75,11 +90,77 @@ public class MovieDetailPresenterTest {
     }
 
     @Test
+    public void loadMovieDetails_WhenNetworkReturnsVideosForMovie_ShouldDisplayBackdrop() {
+        when(movieRepository.getMovieDetails(MOVIE.getId().toString())).thenReturn(Single.just(MOVIE_DETAILS));
+
+        movieDetailPresenter.loadMovieDetails();
+
+        verify(movieDetailView).displayBackdrop(MOVIE.getBackdropPath());
+    }
+
+    @Test
     public void loadMovieDetails_WhenNetworkReturnsReviewsForMovie_ShouldDisplayReviews() {
-        when(movieRepository.getMovieDetails(MOVIE_ID)).thenReturn(Single.just(MOVIE_DETAILS));
+        when(movieRepository.getMovieDetails(MOVIE.getId().toString())).thenReturn(Single.just(MOVIE_DETAILS));
 
         movieDetailPresenter.loadMovieDetails();
 
         verify(movieDetailView).displayReviews(MOVIE_DETAILS.getReviews().getResults());
     }
+
+    @Test
+    public void loadMovieDetails_WhenNetworkReturnsVideosForMovie_ShouldDisplayBackdropPlayButton() {
+        when(movieRepository.getMovieDetails(MOVIE.getId().toString())).thenReturn(Single.just(MOVIE_DETAILS));
+
+        movieDetailPresenter.loadMovieDetails();
+
+        verify(movieDetailView).displayBackdropPlayButton(true);
+    }
+
+    @Test
+    public void loadMovieDetails_WhenNetworkError_ShouldDisplayNetworkError() {
+        when(movieRepository.getMovieDetails(MOVIE.getId().toString())).thenReturn(Single.error(new Throwable("network error")));
+
+        movieDetailPresenter.loadMovieDetails();
+
+        verify(movieDetailView).displayNetworkError();
+    }
+
+    @Test
+    public void loadMovieDetails_WhenNetworkReturnsNoVideosForMovie_ShouldNotDisplayBackdropPlayButton() {
+        VideosResponse emptyVideos = new VideosResponse();
+        emptyVideos.setResults(Collections.emptyList());
+        MOVIE_DETAILS.setVideos(emptyVideos);
+
+        when(movieRepository.getMovieDetails(MOVIE.getId().toString())).thenReturn(Single.just(MOVIE_DETAILS));
+
+        movieDetailPresenter.loadMovieDetails();
+
+        verify(movieDetailView).displayBackdropPlayButton(false);
+    }
+
+    @Test
+    public void handleShareClick_WhenVideoAvailable_ShouldShowShareVideoUi() {
+        when(movieRepository.getMovieDetails(MOVIE.getId().toString())).thenReturn(Single.just(MOVIE_DETAILS));
+
+        movieDetailPresenter.loadMovieDetails();
+        movieDetailPresenter.handleShareClick();
+
+        verify(movieDetailView).showShareVideoUi(anyString(), MOVIE.getTitle());
+    }
+
+    @Test
+    public void handleShareClick_WhenNoVideoAvailable_ShouldDisplayNoVideosMessage() {
+        VideosResponse emptyVideos = new VideosResponse();
+        emptyVideos.setResults(Collections.emptyList());
+        MOVIE_DETAILS.setVideos(emptyVideos);
+
+        when(movieRepository.getMovieDetails(MOVIE.getId().toString())).thenReturn(Single.just(MOVIE_DETAILS));
+
+        movieDetailPresenter.loadMovieDetails();
+        movieDetailPresenter.handleShareClick();
+
+        verify(movieDetailView).displayNoVideosMessage();
+    }
+
+
 }

@@ -25,7 +25,6 @@
         android:src="@drawable/ic_action_play"
         android:layout_gravity="center"
         android:scaleType="fitXY"
-        android:onClick="onTrailerPlayButtonClick"
         android:background="@android:color/transparent"
         android:contentDescription="@string/trailer_content"/>
 </FrameLayout>

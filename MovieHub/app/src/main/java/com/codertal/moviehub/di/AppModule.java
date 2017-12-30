@@ -28,11 +28,4 @@ public class AppModule {
     RemoteMovieService.API provideRemoteMovieServiceApi() {
         return RemoteMovieService.getMovieService();
     }
-
-    @Provides
-    @Singleton
-    LocalMovieService provideLocalMovieService(ContentResolver cr) {
-        return new LocalMovieService(cr);
-    }
-
 }
