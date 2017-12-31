@@ -136,7 +136,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
             mPresenter.loadMovieDetails();
 
             setUpVideosCard();
-            setUpReviewsCard(savedInstanceState);
+            setUpReviewsCard();
 
         }else{
             finish();
@@ -150,7 +150,6 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
         //Locate ShareMenuItem and display it if a trailer is available
         mShareMenuItem = menu.findItem(R.id.menu_item_share);
-        //displayShareMenuItem();
 
         return true;
     }
@@ -182,13 +181,25 @@ public class MovieDetailActivity extends AppCompatActivity implements
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        writeToBundle(outState, mPresenter.getState());
+    }
 
-        //Save scroll position and any expanded reviews
-        outState.putIntArray(SCROLL_POSITION_KEY,
-                new int[]{ mScrollView.getScrollX(), mScrollView.getScrollY()});
-        if(!mReviewListAdapter.getExpandedViewPositions().isEmpty()){
-            outState.putIntegerArrayList(EXPANDED_POSITIONS_KEY, mReviewListAdapter.getExpandedViewPositions());
-        }
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mPresenter.restoreState(readFromBundle(savedInstanceState));
+    }
+
+    @Override
+    public void writeToBundle(Bundle outState, MovieDetailContract.State state) {
+        outState.putIntArray(SCROLL_POSITION_KEY, state.getScrollPositions());
+        outState.putIntegerArrayList(EXPANDED_POSITIONS_KEY, state.getExpandedViewPositions());
+    }
+
+    @Override
+    public MovieDetailContract.State readFromBundle(@NonNull Bundle savedInstanceState) {
+        return new MovieDetailState(savedInstanceState.getIntArray(SCROLL_POSITION_KEY),
+                savedInstanceState.getIntegerArrayList(EXPANDED_POSITIONS_KEY));
     }
 
     @Override
@@ -313,6 +324,26 @@ public class MovieDetailActivity extends AppCompatActivity implements
     }
 
     @Override
+    public int[] getScrollPositions() {
+        return new int[]{ mScrollView.getScrollX(), mScrollView.getScrollY()};
+    }
+
+    @Override
+    public ArrayList<Integer> getExpandedViewPositions() {
+        return mReviewListAdapter.getExpandedViewPositions();
+    }
+
+    @Override
+    public void scrollPage(int positionX, int positionY) {
+        mScrollView.post(() -> mScrollView.scrollTo(positionX, positionY));
+    }
+
+    @Override
+    public void setExpandedViewPositions(@NonNull ArrayList<Integer> expandedViewPositions) {
+        mReviewListAdapter.setExpandedViewPositions(expandedViewPositions);
+    }
+
+    @Override
     public void onViewHolderClick(View view, int position, Video item) {
         mPresenter.handleVideoItemClick(item);
     }
@@ -373,7 +404,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
         trailerList.setNestedScrollingEnabled(false);
     }
 
-    private void setUpReviewsCard(Bundle savedInstanceState) {
+    private void setUpReviewsCard() {
 
         View reviewSectionInclude = findViewById(R.id.cv_review_section);
 
@@ -393,23 +424,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
         reviewSectionTitle.setText(getString(R.string.reviews_header));
         emptyReviewsView.setText(getString(R.string.empty_reviews));
 
-        ArrayList<Integer> expandedViewPositions = new ArrayList<>();
-
-        //Restore expanded reviews positions and scroll position
-        if(savedInstanceState!=null){
-
-            if(savedInstanceState.containsKey(EXPANDED_POSITIONS_KEY)){
-                expandedViewPositions = savedInstanceState.getIntegerArrayList(EXPANDED_POSITIONS_KEY);
-            }
-
-            if(savedInstanceState.containsKey(SCROLL_POSITION_KEY)){
-                final int[] position = savedInstanceState.getIntArray(SCROLL_POSITION_KEY);
-                if(position != null)
-                    mScrollView.post(() -> mScrollView.scrollTo(position[0], position[1]));
-            }
-        }
-
-        mReviewListAdapter = new ReviewListAdapter(null, emptyReviewsView, expandedViewPositions);
+        mReviewListAdapter = new ReviewListAdapter(null, emptyReviewsView);
         reviewList.setAdapter(mReviewListAdapter);
         reviewList.setNestedScrollingEnabled(false);
     }

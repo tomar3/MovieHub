@@ -27,6 +27,7 @@ public class MovieDetailPresenter extends MovieDetailContract.Presenter {
     private MovieDetailContract.View mMovieDetailView;
 
     private Movie mMovie;
+    private MovieDetailContract.State mState;
     private List<Video> mVideos;
     private MovieRepository mMovieRepository;
     private MovieFavoritesQueryHandler.OnMovieFavoriteQueryListener mMovieFavoriteQueryListener;
@@ -42,6 +43,16 @@ public class MovieDetailPresenter extends MovieDetailContract.Presenter {
         mMovieFavoriteQueryListener = movieFavoriteQueryListener;
 
         mVideos = new ArrayList<>();
+    }
+
+    @Override
+    public void restoreState(MovieDetailContract.State state) {
+        mState = state;
+    }
+
+    @Override
+    public MovieDetailContract.State getState() {
+        return new MovieDetailState(mMovieDetailView.getScrollPositions(), mMovieDetailView.getExpandedViewPositions());
     }
 
     @Override
@@ -72,6 +83,12 @@ public class MovieDetailPresenter extends MovieDetailContract.Presenter {
 
                         mMovieDetailView.displayVideos(mVideos);
                         mMovieDetailView.displayReviews(reviews);
+
+                        //Restore view state if exists
+                        if(mState != null) {
+                            mMovieDetailView.setExpandedViewPositions(mState.getExpandedViewPositions());
+                            mMovieDetailView.scrollPage(mState.getScrollPositions()[0], mState.getScrollPositions()[1]);
+                        }
 
                         mMovieDetailView.displayBackdrop(mMovie.getBackdropPath());
 

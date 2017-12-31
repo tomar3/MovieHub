@@ -4,16 +4,20 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import com.codertal.moviehub.base.BaseState;
+import com.codertal.moviehub.base.StatefulView;
 import com.codertal.moviehub.base.presenter.BaseRxPresenter;
+import com.codertal.moviehub.base.presenter.StatefulPresenter;
 import com.codertal.moviehub.data.movies.model.Movie;
 import com.codertal.moviehub.data.reviews.model.Review;
 import com.codertal.moviehub.data.videos.model.Video;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface MovieDetailContract {
 
-    interface View {
+    interface View extends StatefulView<State> {
 
         void displayMovieDetails(@NonNull Movie movie);
         void displayVideos(@NonNull List<Video> videos);
@@ -27,11 +31,15 @@ public interface MovieDetailContract {
         void displayShareMenuItem(boolean display);
         void showVideoUi(@NonNull String videoKey);
         void showShareVideoUi(String videoUrl, String movieTitle);
+        int[] getScrollPositions();
+        ArrayList<Integer> getExpandedViewPositions();
+        void scrollPage(int positionX, int positionY);
+        void setExpandedViewPositions(@NonNull ArrayList<Integer> expandedViewPositions);
 
     }
 
 
-    abstract class Presenter extends BaseRxPresenter {
+    abstract class Presenter extends BaseRxPresenter implements StatefulPresenter<State> {
 
         abstract void loadMovieDetails();
         abstract void handleShareClick();
@@ -44,6 +52,12 @@ public interface MovieDetailContract {
         abstract void handleNetworkConnected();
         abstract void handleVideoItemClick(Video video);
 
+    }
+
+    interface State extends BaseState {
+
+        int[] getScrollPositions();
+        ArrayList<Integer> getExpandedViewPositions();
     }
 
 }

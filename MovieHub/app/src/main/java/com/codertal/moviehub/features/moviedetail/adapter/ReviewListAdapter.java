@@ -23,10 +23,10 @@ public class ReviewListAdapter extends BaseRecyclerViewAdapter<Review>{
     private ArrayList<Integer> mExpandedViewPositions;
 
     public ReviewListAdapter(OnViewHolderClickListener<Review> onViewHolderClickListener,
-                             View emptyView, ArrayList<Integer> expandedViewPositions){
+                             View emptyView){
 
         super(onViewHolderClickListener, emptyView);
-        mExpandedViewPositions = expandedViewPositions;
+        mExpandedViewPositions = new ArrayList<>();
     }
 
     @Override
@@ -67,6 +67,10 @@ public class ReviewListAdapter extends BaseRecyclerViewAdapter<Review>{
 
     public ArrayList<Integer> getExpandedViewPositions(){
         return mExpandedViewPositions;
+    }
+
+    public void setExpandedViewPositions(@NonNull ArrayList<Integer> expandedViewPositions) {
+        mExpandedViewPositions = expandedViewPositions;
     }
 
     //Define the View Holder for this adapter
