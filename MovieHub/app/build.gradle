@@ -81,4 +81,9 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+
+    implementation "com.f2prateek.dart:dart:$project.dartVersion"
+    annotationProcessor "com.f2prateek.dart:dart-processor:$project.dartVersion"
+    implementation "com.f2prateek.dart:henson:$project.dartVersion"
+    annotationProcessor "com.f2prateek.dart:henson-processor:$project.dartVersion"
 }

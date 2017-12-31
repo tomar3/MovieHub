@@ -43,6 +43,8 @@ import com.codertal.moviehub.data.reviews.model.Review;
 import com.codertal.moviehub.features.movies.receiver.NetworkChangeBroadcastReceiver;
 import com.codertal.moviehub.data.movies.local.task.MovieFavoritesQueryHandler;
 import com.codertal.moviehub.utilities.NetworkUtils;
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 
 import org.parceler.Parcels;
 
@@ -97,6 +99,9 @@ public class MovieDetailActivity extends AppCompatActivity implements
     @Inject
     MovieRepository mMovieRepository;
 
+    @InjectExtra
+    Movie mMovie;
+
     private static final String EXPANDED_POSITIONS_KEY = "expandedPositions";
     private static final String SCROLL_POSITION_KEY = "scrollPosition";
 
@@ -114,33 +119,22 @@ public class MovieDetailActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
         ButterKnife.bind(this);
+        Dart.inject(this);
 
         //Initialize necessary components
         mNetworkChangeBroadcastReceiver = new NetworkChangeBroadcastReceiver(this);
 
-        //Retrieve the incoming intent
-        Intent incomingIntent = getIntent();
 
-        //Set up all of the views with the passed data
-        if(incomingIntent != null){
+        toolbar.setNavigationOnClickListener(v ->
+                NavUtils.navigateUpFromSameTask(MovieDetailActivity.this));
 
-            toolbar.setNavigationOnClickListener(v ->
-                    NavUtils.navigateUpFromSameTask(MovieDetailActivity.this));
+        setSupportActionBar(toolbar);
 
-            setSupportActionBar(toolbar);
+        mPresenter = new MovieDetailPresenter(this, mMovie, mMovieRepository, this);
+        mPresenter.loadMovieDetails();
 
-            //Set the views based on the passed data
-            Movie movie = Parcels.unwrap(incomingIntent.getParcelableExtra(MoviesFragment.MOVIE_INFO));
-
-            mPresenter = new MovieDetailPresenter(this, movie, mMovieRepository, this);
-            mPresenter.loadMovieDetails();
-
-            setUpVideosCard();
-            setUpReviewsCard();
-
-        }else{
-            finish();
-        }
+        setUpVideosCard();
+        setUpReviewsCard();
     }
 
     @Override

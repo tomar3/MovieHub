@@ -18,12 +18,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.codertal.moviehub.base.adapter.BaseRecyclerViewAdapter;
+import com.codertal.moviehub.features.moviedetail.Henson;
 import com.codertal.moviehub.features.moviedetail.MovieDetailActivity;
 import com.codertal.moviehub.data.movies.model.Movie;
 import com.codertal.moviehub.R;
 import com.codertal.moviehub.features.movies.adapter.MovieGridAdapter;
 import com.codertal.moviehub.data.movies.MovieRepository;
 import com.codertal.moviehub.features.movies.receiver.NetworkChangeBroadcastReceiver;
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.HensonNavigable;
 
 import org.parceler.Parcels;
 
@@ -93,12 +96,23 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
         setUpMoviesRecycler();
 
         //Populate grid with api query depending on sort type
-        String filterType = getArguments().getString(SORT_TYPE);
+        Bundle bundle = getArguments();
+
+        if(bundle == null) {
+            throw new IllegalArgumentException("This fragment needs an argument for filter type");
+        }
+
+        String filterType = bundle.getString(SORT_TYPE);
+
+        if(filterType == null) {
+            throw new IllegalArgumentException("Filter type cannot be null");
+        }
+
         mPresenter = new MoviesPresenter(this, mMovieRepository, filterType);
 
         mPresenter.loadMovies();
 
-        if(!filterType.equals(FAVORITES)){
+        if (!filterType.equals(FAVORITES)) {
             mNetworkChangeBroadcastReceiver = new NetworkChangeBroadcastReceiver(this);
         }
 
@@ -195,9 +209,10 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     @Override
     public void showMovieDetailUi(Movie movie) {
         //Start detail activity and pass it information about the chosen movie
-        Intent detailIntent = new Intent(getContext(), MovieDetailActivity.class);
-
-        detailIntent.putExtra(MOVIE_INFO, Parcels.wrap(movie));
+        Intent detailIntent = Henson.with(getContext())
+                .gotoMovieDetailActivity()
+                .mMovie(movie)
+                .build();
 
         startActivity(detailIntent);
     }
