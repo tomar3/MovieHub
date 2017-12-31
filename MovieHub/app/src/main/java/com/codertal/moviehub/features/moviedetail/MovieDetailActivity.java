@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.codertal.moviehub.base.adapter.BaseRecyclerViewAdapter;
 import com.codertal.moviehub.data.movies.MovieRepository;
 import com.codertal.moviehub.data.videos.model.Video;
 import com.codertal.moviehub.features.movies.favorites.FavoriteSnackbarListener;
@@ -58,7 +59,7 @@ import dagger.android.AndroidInjection;
 
 public class MovieDetailActivity extends AppCompatActivity implements
         MovieDetailContract.View,
-        TrailerListAdapter.ListItemClickListener,
+        BaseRecyclerViewAdapter.OnViewHolderClickListener<Video>,
         MovieFavoritesQueryHandler.OnMovieFavoriteQueryListener,
         FavoriteSnackbarListener.OnFavoriteSnackbarClickListener,
         NetworkChangeBroadcastReceiver.OnNetworkConnectedListener{
@@ -208,12 +209,12 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
     @Override
     public void displayVideos(@NonNull List<Video> videos) {
-        mTrailerListAdapter.updateData(videos);
+        mTrailerListAdapter.updateItems(videos);
     }
 
     @Override
     public void displayReviews(@NonNull List<Review> reviews) {
-        mReviewListAdapter.updateData(reviews);
+        mReviewListAdapter.updateItems(reviews);
     }
 
     @Override
@@ -312,8 +313,8 @@ public class MovieDetailActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onListItemClick(int position) {
-        mPresenter.handleVideoItemClick(position);
+    public void onViewHolderClick(View view, int position, Video item) {
+        mPresenter.handleVideoItemClick(item);
     }
 
     @OnClick(R.id.fab_fav)
@@ -367,7 +368,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
         emptyTrailersView.setText(getString(R.string.empty_trailers));
 
         //Create and set the trailer list adapter
-        mTrailerListAdapter = new TrailerListAdapter(new ArrayList<>(), this, emptyTrailersView);
+        mTrailerListAdapter = new TrailerListAdapter(this, emptyTrailersView);
         trailerList.setAdapter(mTrailerListAdapter);
         trailerList.setNestedScrollingEnabled(false);
     }
@@ -408,7 +409,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
             }
         }
 
-        mReviewListAdapter = new ReviewListAdapter(new ArrayList<>(), emptyReviewsView, expandedViewPositions);
+        mReviewListAdapter = new ReviewListAdapter(null, emptyReviewsView, expandedViewPositions);
         reviewList.setAdapter(mReviewListAdapter);
         reviewList.setNestedScrollingEnabled(false);
     }

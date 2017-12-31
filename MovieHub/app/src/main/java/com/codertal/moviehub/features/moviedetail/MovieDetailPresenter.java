@@ -170,9 +170,8 @@ public class MovieDetailPresenter extends MovieDetailContract.Presenter {
     }
 
     @Override
-    void handleVideoItemClick(int position) {
-        String videoKey = mVideos.get(position).getKey();
-        mMovieDetailView.showVideoUi(videoKey);
+    void handleVideoItemClick(Video video) {
+        mMovieDetailView.showVideoUi(video.getKey());
     }
 
     @Override

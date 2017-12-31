@@ -18,6 +18,7 @@ public interface MoviesContract {
         void displayLoadingError();
         void displayLoadingIndicator(boolean isLoading);
         int getLayoutManagerPosition();
+        void showMovieDetailUi(Movie movie);
         void restoreLayoutManagerPosition(int layoutManagerPosition);
 
     }
@@ -26,6 +27,7 @@ public interface MoviesContract {
 
         abstract void loadMovies();
         abstract void handleNetworkConnected();
+        abstract void handleMovieClick(Movie movie);
 
     }
 

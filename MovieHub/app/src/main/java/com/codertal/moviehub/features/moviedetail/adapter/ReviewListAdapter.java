@@ -1,6 +1,7 @@
 package com.codertal.moviehub.features.moviedetail.adapter;
 
 import android.animation.ObjectAnimator;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,42 +9,44 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.codertal.moviehub.base.adapter.BaseRecyclerViewAdapter;
 import com.codertal.moviehub.data.reviews.model.Review;
 import com.codertal.moviehub.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.ReviewViewHolder>{
+import butterknife.BindView;
 
-    private int mNumberOfItems;
-    private List<Review> mReviews;
-    private TextView mEmptyReviewsView;
+public class ReviewListAdapter extends BaseRecyclerViewAdapter<Review>{
+
     private ArrayList<Integer> mExpandedViewPositions;
 
-    public ReviewListAdapter(ArrayList<Review> reviews, TextView emptyReviewsView,
-                             ArrayList<Integer> expandedViewPositions){
+    public ReviewListAdapter(OnViewHolderClickListener<Review> onViewHolderClickListener,
+                             View emptyView, ArrayList<Integer> expandedViewPositions){
 
-        mNumberOfItems = reviews.size();
+        super(onViewHolderClickListener, emptyView);
         mExpandedViewPositions = expandedViewPositions;
-        mReviews = reviews;
-        mEmptyReviewsView = emptyReviewsView;
+    }
+
+    @Override
+    protected View createView(ViewGroup viewGroup, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+
+        return inflater.inflate(R.layout.review_list_item, viewGroup, false);
     }
 
     @Override
     public ReviewViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType){
-        //Inflate the review_list_item layout xml
-        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-        View itemView = inflater.inflate(R.layout.review_list_item, viewGroup, false);
-
-        return new ReviewViewHolder(itemView);
+        return new ReviewViewHolder(createView(viewGroup, viewType));
     }
 
     @Override
-    public void onBindViewHolder(final ReviewViewHolder holder, int position) {
-        final int itemPosition = position;
-        String author = mReviews.get(position).getAuthor();
-        String content = mReviews.get(position).getContent();
+    protected void bindView(Review item, BaseRecyclerViewAdapter.BaseViewHolder viewHolder) {
+        ReviewViewHolder holder = (ReviewViewHolder) viewHolder;
+
+        String author = item.getAuthor();
+        String content = item.getContent();
 
         holder.mReviewAuthor.setText(author);
         holder.mReviewContent.setText(content);
@@ -56,31 +59,10 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
             }
 
             //Restore expanded state if previously saved
-            if(mExpandedViewPositions.contains(itemPosition)){
+            if(mExpandedViewPositions.contains(getItemPosition(item))){
                 holder.expandTextView(true);
             }
         });
-
-
-
-    }
-
-    @Override
-    public int getItemCount(){
-        //Display empty view if no reviews exist
-        if(mNumberOfItems > 0){
-            mEmptyReviewsView.setVisibility(View.GONE);
-        }else {
-            mEmptyReviewsView.setVisibility(View.VISIBLE);
-        }
-
-        return mNumberOfItems;
-    }
-
-    public void updateData(List<Review> reviews){
-        mReviews = reviews;
-        mNumberOfItems = reviews.size();
-        this.notifyDataSetChanged();
     }
 
     public ArrayList<Integer> getExpandedViewPositions(){
@@ -88,24 +70,25 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
     }
 
     //Define the View Holder for this adapter
-    class ReviewViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        TextView mReviewAuthor, mReviewContent;
+    class ReviewViewHolder extends BaseViewHolder{
+        @BindView(R.id.tv_author)
+        TextView mReviewAuthor;
+
+        @BindView(R.id.tv_review_content)
+        TextView mReviewContent;
+
+        @BindView(R.id.iv_expand_arrow)
         ImageView mExpandArrow;
+
         int rotationAngle = 0;
 
-        public ReviewViewHolder(View itemView){
+        ReviewViewHolder(View itemView){
             super(itemView);
-
-            //View holder contains only one image view
-            mReviewAuthor = (TextView) itemView.findViewById(R.id.tv_author);
-            mReviewContent = (TextView) itemView.findViewById(R.id.tv_review_content);
-            mExpandArrow = (ImageView) itemView.findViewById(R.id.iv_expand_arrow);
-
-            itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
+            super.onClick(v);
             expandTextView(false);
         }
 

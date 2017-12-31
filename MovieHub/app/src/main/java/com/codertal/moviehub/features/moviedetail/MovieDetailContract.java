@@ -42,7 +42,7 @@ public interface MovieDetailContract {
         abstract void handleFavoriteSnackbarClick();
         abstract void handleBackdropPlayButtonClick();
         abstract void handleNetworkConnected();
-        abstract void handleVideoItemClick(int position);
+        abstract void handleVideoItemClick(Video video);
 
     }
 

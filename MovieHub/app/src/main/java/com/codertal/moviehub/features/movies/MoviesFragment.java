@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.codertal.moviehub.base.adapter.BaseRecyclerViewAdapter;
 import com.codertal.moviehub.features.moviedetail.MovieDetailActivity;
 import com.codertal.moviehub.data.movies.model.Movie;
 import com.codertal.moviehub.R;
@@ -38,7 +39,7 @@ import dagger.android.support.AndroidSupportInjection;
 import static com.codertal.moviehub.features.movies.MoviesFilterType.FAVORITES;
 
 public class MoviesFragment extends Fragment implements MoviesContract.View,
-        MovieGridAdapter.OnMovieClickListener,
+        BaseRecyclerViewAdapter.OnViewHolderClickListener<Movie>,
         NetworkChangeBroadcastReceiver.OnNetworkConnectedListener{
 
     @BindView(R.id.tv_empty_view)
@@ -69,7 +70,6 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
 
     private MovieGridAdapter mMovieGridAdapter;
     private GridLayoutManager mLayoutManager;
-    private String mFilterType;
     private NetworkChangeBroadcastReceiver mNetworkChangeBroadcastReceiver;
 
     public MoviesFragment() {}
@@ -93,12 +93,12 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
         setUpMoviesRecycler();
 
         //Populate grid with api query depending on sort type
-        mFilterType = getArguments().getString(SORT_TYPE);
-        mPresenter = new MoviesPresenter(this, mMovieRepository, mFilterType);
+        String filterType = getArguments().getString(SORT_TYPE);
+        mPresenter = new MoviesPresenter(this, mMovieRepository, filterType);
 
         mPresenter.loadMovies();
 
-        if(!mFilterType.equals(FAVORITES)){
+        if(!filterType.equals(FAVORITES)){
             mNetworkChangeBroadcastReceiver = new NetworkChangeBroadcastReceiver(this);
         }
 
@@ -173,7 +173,7 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
 
     @Override
     public void displayMovies(List<Movie> movies) {
-        mMovieGridAdapter.updateData(movies);
+        mMovieGridAdapter.updateItems(movies);
         displayResults(true, NO_ERROR);
     }
 
@@ -193,6 +193,16 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     }
 
     @Override
+    public void showMovieDetailUi(Movie movie) {
+        //Start detail activity and pass it information about the chosen movie
+        Intent detailIntent = new Intent(getContext(), MovieDetailActivity.class);
+
+        detailIntent.putExtra(MOVIE_INFO, Parcels.wrap(movie));
+
+        startActivity(detailIntent);
+    }
+
+    @Override
     public int getLayoutManagerPosition() {
         return mLayoutManager.findFirstVisibleItemPosition();
     }
@@ -203,14 +213,8 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     }
 
     @Override
-    public void onMovieClick(Movie movie){
-        //Start detail activity and pass it information about the chosen movie
-        Intent detailIntent = new Intent(getContext(), MovieDetailActivity.class);
-
-        detailIntent.putExtra(MOVIE_INFO, Parcels.wrap(movie));
-
-        startActivity(detailIntent);
-
+    public void onViewHolderClick(View view, int position, Movie item) {
+        mPresenter.handleMovieClick(item);
     }
 
     @Override
@@ -257,7 +261,7 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
         mMoviesRecycler.setHasFixedSize(true);
 
         //Create and set the movie grid adapter
-        mMovieGridAdapter = new MovieGridAdapter(new ArrayList<>(), getContext(), this);
+        mMovieGridAdapter = new MovieGridAdapter(this, null);
         mMoviesRecycler.setAdapter(mMovieGridAdapter);
     }
 }

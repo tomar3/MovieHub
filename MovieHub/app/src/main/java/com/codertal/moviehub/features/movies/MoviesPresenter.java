@@ -123,6 +123,11 @@ public class MoviesPresenter extends MoviesContract.Presenter implements Favorit
     }
 
     @Override
+    void handleMovieClick(Movie movie) {
+        mMoviesView.showMovieDetailUi(movie);
+    }
+
+    @Override
     public void onFavoritesContentChange(Uri uri) {
         mMoviesView.displayLoadingIndicator(true);
         loadFavoriteMovies();

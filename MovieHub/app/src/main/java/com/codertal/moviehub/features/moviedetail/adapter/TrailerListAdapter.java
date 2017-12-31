@@ -1,86 +1,50 @@
 package com.codertal.moviehub.features.moviedetail.adapter;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.codertal.moviehub.R;
+import com.codertal.moviehub.base.adapter.BaseRecyclerViewAdapter;
 import com.codertal.moviehub.data.videos.model.Video;
 
-import java.util.List;
+import butterknife.BindView;
 
-public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.TrailerViewHolder>{
+public class TrailerListAdapter extends BaseRecyclerViewAdapter<Video>{
 
-    final private ListItemClickListener mOnListItemClickListener;
-    private int mNumberOfItems;
-    private List<Video> mVideos;
-    private TextView mEmptyTrailersView;
 
-    //Declare list item click listener for this adapter
-    public interface ListItemClickListener{
-        void onListItemClick(int position);
+    public TrailerListAdapter(OnViewHolderClickListener<Video> onViewHolderClickListener,
+                              View emptyView){
+        super(onViewHolderClickListener, emptyView);
     }
 
-    public TrailerListAdapter(List<Video> videos, ListItemClickListener listItemClickListener,
-                              TextView emptyTrailersView){
-        mNumberOfItems = videos.size();
-        mVideos = videos;
-        mEmptyTrailersView = emptyTrailersView;
-
-        //Use detail activity for the list item click listener
-        mOnListItemClickListener = listItemClickListener;
+    @Override
+    protected View createView(ViewGroup viewGroup, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+        return inflater.inflate(R.layout.trailer_list_item, viewGroup, false);
     }
 
     @Override
     public TrailerViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType){
-        //Inflate the trailer_list_item layout xml
-        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-        View itemView = inflater.inflate(R.layout.trailer_list_item, viewGroup, false);
-
-        return new TrailerViewHolder(itemView);
+        return new TrailerViewHolder(createView(viewGroup, viewType));
     }
 
     @Override
-    public void onBindViewHolder(TrailerViewHolder holder, int position) {
-        holder.mTrailerTitle.setText(mVideos.get(position).getName());
-    }
+    protected void bindView(Video item, BaseRecyclerViewAdapter.BaseViewHolder viewHolder) {
+        TrailerViewHolder holder = (TrailerViewHolder) viewHolder;
 
-    @Override
-    public int getItemCount(){
-        //Show empty view if no trailers exist
-        if(mNumberOfItems > 0){
-            mEmptyTrailersView.setVisibility(View.GONE);
-        }else {
-            mEmptyTrailersView.setVisibility(View.VISIBLE);
-        }
-        return mNumberOfItems;
-    }
-
-    public void updateData(List<Video> trailerTitles){
-        mVideos = trailerTitles;
-        mNumberOfItems = mVideos.size();
-        this.notifyDataSetChanged();
+        holder.mTrailerTitle.setText(item.getName());
     }
 
 
     //Define the View Holder for this adapter
-    class TrailerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class TrailerViewHolder extends BaseViewHolder {
+        @BindView(R.id.tv_trailer_title)
         TextView mTrailerTitle;
 
-        public TrailerViewHolder(View itemView){
+        TrailerViewHolder(View itemView){
             super(itemView);
-
-            mTrailerTitle = itemView.findViewById(R.id.tv_trailer_title);
-
-            //Set this instance as the on click listener for the item view
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v){
-            mOnListItemClickListener.onListItemClick(getAdapterPosition());
         }
     }
 }
