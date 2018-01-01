@@ -22,7 +22,7 @@ public class TrailerListAdapter extends BaseRecyclerViewAdapter<Video>{
     @Override
     protected View createView(ViewGroup viewGroup, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-        return inflater.inflate(R.layout.trailer_list_item, viewGroup, false);
+        return inflater.inflate(R.layout.list_item_trailer, viewGroup, false);
     }
 
     @Override

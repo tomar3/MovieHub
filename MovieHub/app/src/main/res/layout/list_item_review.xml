@@ -18,6 +18,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/ic_review"
+            android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"/>
 
         <TextView

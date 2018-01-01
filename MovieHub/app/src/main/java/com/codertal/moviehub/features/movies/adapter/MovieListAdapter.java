@@ -12,9 +12,9 @@ import com.codertal.moviehub.utilities.NetworkUtils;
 
 import butterknife.BindView;
 
-public class MovieGridAdapter extends BaseRecyclerViewAdapter<Movie> {
+public class MovieListAdapter extends BaseRecyclerViewAdapter<Movie> {
 
-    public MovieGridAdapter(OnViewHolderClickListener<Movie> onViewHolderClickListener,
+    public MovieListAdapter(OnViewHolderClickListener<Movie> onViewHolderClickListener,
                             View emptyView){
         super(onViewHolderClickListener, emptyView);
     }
@@ -23,7 +23,7 @@ public class MovieGridAdapter extends BaseRecyclerViewAdapter<Movie> {
     protected View createView(ViewGroup viewGroup, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
 
-        return inflater.inflate(R.layout.grid_item, viewGroup, false);
+        return inflater.inflate(R.layout.list_item_movie, viewGroup, false);
     }
 
     @Override

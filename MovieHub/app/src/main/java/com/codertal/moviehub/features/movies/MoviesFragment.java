@@ -19,18 +19,12 @@ import android.widget.TextView;
 
 import com.codertal.moviehub.base.adapter.BaseRecyclerViewAdapter;
 import com.codertal.moviehub.features.moviedetail.Henson;
-import com.codertal.moviehub.features.moviedetail.MovieDetailActivity;
 import com.codertal.moviehub.data.movies.model.Movie;
 import com.codertal.moviehub.R;
-import com.codertal.moviehub.features.movies.adapter.MovieGridAdapter;
+import com.codertal.moviehub.features.movies.adapter.MovieListAdapter;
 import com.codertal.moviehub.data.movies.MovieRepository;
 import com.codertal.moviehub.features.movies.receiver.NetworkChangeBroadcastReceiver;
-import com.f2prateek.dart.Dart;
-import com.f2prateek.dart.HensonNavigable;
 
-import org.parceler.Parcels;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -61,7 +55,6 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     MovieRepository mMovieRepository;
 
     public static final String SORT_TYPE = "SORT_TYPE";
-    public static final String MOVIE_INFO = "MOVIE_INFO";
     private static final String SCROLL_POSITION = "SCROLL_POSITION";
 
     private static final String NETWORK_ERROR = "NETWORK_ERROR";
@@ -71,7 +64,7 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
 
     private MoviesContract.Presenter mPresenter;
 
-    private MovieGridAdapter mMovieGridAdapter;
+    private MovieListAdapter mMovieListAdapter;
     private GridLayoutManager mLayoutManager;
     private NetworkChangeBroadcastReceiver mNetworkChangeBroadcastReceiver;
 
@@ -87,7 +80,7 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_movies_grid, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_movies, container, false);
         ButterKnife.bind(this, rootView);
 
         mLoadingIndicator.getIndeterminateDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
@@ -187,7 +180,7 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
 
     @Override
     public void displayMovies(List<Movie> movies) {
-        mMovieGridAdapter.updateItems(movies);
+        mMovieListAdapter.updateItems(movies);
         displayResults(true, NO_ERROR);
     }
 
@@ -276,7 +269,7 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
         mMoviesRecycler.setHasFixedSize(true);
 
         //Create and set the movie grid adapter
-        mMovieGridAdapter = new MovieGridAdapter(this, null);
-        mMoviesRecycler.setAdapter(mMovieGridAdapter);
+        mMovieListAdapter = new MovieListAdapter(this, null);
+        mMoviesRecycler.setAdapter(mMovieListAdapter);
     }
 }
