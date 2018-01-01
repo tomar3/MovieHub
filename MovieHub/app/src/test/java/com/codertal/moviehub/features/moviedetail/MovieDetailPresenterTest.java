@@ -25,6 +25,7 @@ import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -145,7 +146,7 @@ public class MovieDetailPresenterTest {
         movieDetailPresenter.loadMovieDetails();
         movieDetailPresenter.handleShareClick();
 
-        verify(movieDetailView).showShareVideoUi(anyString(), MOVIE.getTitle());
+        verify(movieDetailView).showShareVideoUi(anyString(), eq(MOVIE.getTitle()));
     }
 
     @Test

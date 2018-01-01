@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.codertal.moviehub.BuildConfig;
 import com.codertal.moviehub.data.movies.local.LocalMovieService;
 import com.codertal.moviehub.data.movies.local.task.MovieFavoritesQueryHandler;
+import com.codertal.moviehub.data.movies.local.task.OnMovieFavoriteQueryListener;
 import com.codertal.moviehub.data.movies.model.Movie;
 import com.codertal.moviehub.data.movies.model.MovieDetailResponse;
 import com.codertal.moviehub.data.movies.model.MoviesResponse;
@@ -42,17 +43,17 @@ public class MovieRepository {
     }
 
     public void addMovieToFavorites(@NonNull Movie movie,
-                                    MovieFavoritesQueryHandler.OnMovieFavoriteQueryListener movieFavoriteQueryListener) {
+                                    OnMovieFavoriteQueryListener movieFavoriteQueryListener) {
         mLocalMovieService.addMovieToFavorites(movie, movieFavoriteQueryListener);
     }
 
     public void removeMovieFromFavorites(@NonNull String movieId,
-                                         MovieFavoritesQueryHandler.OnMovieFavoriteQueryListener movieFavoriteQueryListener) {
+                                         OnMovieFavoriteQueryListener movieFavoriteQueryListener) {
         mLocalMovieService.removeMovieFromFavorites(movieId, movieFavoriteQueryListener);
     }
 
     public void checkIfMovieFavorited(@NonNull String movieId,
-                                      MovieFavoritesQueryHandler.OnMovieFavoriteQueryListener movieFavoriteQueryListener) {
+                                      OnMovieFavoriteQueryListener movieFavoriteQueryListener) {
         mLocalMovieService.checkIfMovieFavorited(movieId, movieFavoriteQueryListener);
     }
 

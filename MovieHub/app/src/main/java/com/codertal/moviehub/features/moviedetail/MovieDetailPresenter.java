@@ -5,8 +5,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.codertal.moviehub.data.movies.MovieRepository;
-import com.codertal.moviehub.data.movies.local.MovieContract;
-import com.codertal.moviehub.data.movies.local.task.MovieFavoritesQueryHandler;
+import com.codertal.moviehub.data.movies.local.task.OnMovieFavoriteQueryListener;
 import com.codertal.moviehub.data.movies.model.Movie;
 import com.codertal.moviehub.data.movies.model.MovieDetailResponse;
 import com.codertal.moviehub.data.reviews.model.Review;
@@ -30,13 +29,13 @@ public class MovieDetailPresenter extends MovieDetailContract.Presenter {
     private MovieDetailContract.State mState;
     private List<Video> mVideos;
     private MovieRepository mMovieRepository;
-    private MovieFavoritesQueryHandler.OnMovieFavoriteQueryListener mMovieFavoriteQueryListener;
+    private OnMovieFavoriteQueryListener mMovieFavoriteQueryListener;
     private boolean mIsFavorited, mHitSnackbar, mNetworkErrorShown;
 
 
     public MovieDetailPresenter(@NonNull MovieDetailContract.View movieDetailView, Movie movie,
                                 MovieRepository movieRepository,
-                                MovieFavoritesQueryHandler.OnMovieFavoriteQueryListener movieFavoriteQueryListener) {
+                                OnMovieFavoriteQueryListener movieFavoriteQueryListener) {
         mMovieDetailView = movieDetailView;
         mMovie = movie;
         mMovieRepository = movieRepository;

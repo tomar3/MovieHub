@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface MoviesContract {
 
-    interface View extends StatefulView<State>{
+    interface View {
 
         void displayEmptyFavorites();
         void displayEmptyMovies();

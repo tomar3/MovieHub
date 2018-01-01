@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.codertal.moviehub.base.StatefulView;
 import com.codertal.moviehub.base.adapter.BaseRecyclerViewAdapter;
 import com.codertal.moviehub.features.moviedetail.Henson;
 import com.codertal.moviehub.data.movies.model.Movie;
@@ -36,6 +37,7 @@ import dagger.android.support.AndroidSupportInjection;
 import static com.codertal.moviehub.features.movies.MoviesFilterType.FAVORITES;
 
 public class MoviesFragment extends Fragment implements MoviesContract.View,
+        StatefulView<MoviesContract.State>,
         BaseRecyclerViewAdapter.OnViewHolderClickListener<Movie>,
         NetworkChangeBroadcastReceiver.OnNetworkConnectedListener{
 

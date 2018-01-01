@@ -17,7 +17,7 @@ import java.util.List;
 
 public interface MovieDetailContract {
 
-    interface View extends StatefulView<State> {
+    interface View {
 
         void displayMovieDetails(@NonNull Movie movie);
         void displayVideos(@NonNull List<Video> videos);

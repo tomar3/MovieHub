@@ -29,24 +29,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.codertal.moviehub.base.StatefulView;
 import com.codertal.moviehub.base.adapter.BaseRecyclerViewAdapter;
 import com.codertal.moviehub.data.movies.MovieRepository;
+import com.codertal.moviehub.data.movies.local.task.OnMovieFavoriteQueryListener;
 import com.codertal.moviehub.data.videos.model.Video;
 import com.codertal.moviehub.features.movies.favorites.FavoriteSnackbarListener;
 import com.codertal.moviehub.GlideApp;
 import com.codertal.moviehub.R;
 import com.codertal.moviehub.features.moviedetail.adapter.ReviewListAdapter;
 import com.codertal.moviehub.features.moviedetail.adapter.TrailerListAdapter;
-import com.codertal.moviehub.features.movies.MoviesFragment;
 import com.codertal.moviehub.data.movies.model.Movie;
 import com.codertal.moviehub.data.reviews.model.Review;
 import com.codertal.moviehub.features.movies.receiver.NetworkChangeBroadcastReceiver;
-import com.codertal.moviehub.data.movies.local.task.MovieFavoritesQueryHandler;
 import com.codertal.moviehub.utilities.NetworkUtils;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
-import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,8 +60,9 @@ import dagger.android.AndroidInjection;
 
 public class MovieDetailActivity extends AppCompatActivity implements
         MovieDetailContract.View,
+        StatefulView<MovieDetailContract.State>,
         BaseRecyclerViewAdapter.OnViewHolderClickListener<Video>,
-        MovieFavoritesQueryHandler.OnMovieFavoriteQueryListener,
+        OnMovieFavoriteQueryListener,
         FavoriteSnackbarListener.OnFavoriteSnackbarClickListener,
         NetworkChangeBroadcastReceiver.OnNetworkConnectedListener{
 
