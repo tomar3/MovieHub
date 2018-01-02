@@ -210,4 +210,5 @@ public class MovieDetailPresenter extends MovieDetailContract.Presenter {
     private void removeFromFavorites(){
         mMovieRepository.removeMovieFromFavorites(mMovie.getId().toString(), mMovieFavoriteQueryListener);
     }
+
 }

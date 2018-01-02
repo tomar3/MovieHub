@@ -1,5 +1,6 @@
 package com.codertal.moviehub.features.moviedetail;
 
+
 import com.codertal.moviehub.data.movies.MovieRepository;
 import com.codertal.moviehub.data.movies.model.Movie;
 import com.codertal.moviehub.data.movies.model.MovieDetailResponse;
@@ -16,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -24,8 +26,11 @@ import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,10 +45,12 @@ public class MovieDetailPresenterTest {
     @Mock
     private MovieRepository movieRepository;
 
+
     private MovieDetailPresenter movieDetailPresenter;
     private String MOVIE_ID;
     private MovieDetailResponse MOVIE_DETAILS;
     private Movie MOVIE;
+    private MovieDetailState STATE;
 
 
     @Before
@@ -62,6 +69,8 @@ public class MovieDetailPresenterTest {
 
         MOVIE_DETAILS.setVideos(videosResponse);
         MOVIE_DETAILS.setReviews(reviewsResponse);
+
+        STATE = new MovieDetailState(new int[]{1, 2}, new ArrayList<>(Arrays.asList(3, 4, 5)));
 
         RxJavaPlugins.setIoSchedulerHandler(__ -> Schedulers.trampoline());
         RxAndroidPlugins.setInitMainThreadSchedulerHandler(__ -> Schedulers.trampoline());
@@ -163,5 +172,92 @@ public class MovieDetailPresenterTest {
         verify(movieDetailView).displayNoVideosMessage();
     }
 
+    @Test
+    public void loadMovieDetails_WhenRestoringState_ShouldSetExpandedViewPositions() {
+        when(movieRepository.getMovieDetails(MOVIE.getId().toString())).thenReturn(Single.just(MOVIE_DETAILS));
+
+        movieDetailPresenter.restoreState(STATE);
+        movieDetailPresenter.loadMovieDetails();
+
+
+        verify(movieDetailView).setExpandedViewPositions(STATE.getExpandedViewPositions());
+    }
+
+    @Test
+    public void loadMovieDetails_WhenRestoringState_ShouldScrollPage() {
+        when(movieRepository.getMovieDetails(MOVIE.getId().toString())).thenReturn(Single.just(MOVIE_DETAILS));
+
+        movieDetailPresenter.restoreState(STATE);
+        movieDetailPresenter.loadMovieDetails();
+
+
+        verify(movieDetailView).scrollPage(STATE.getScrollPositions()[0], STATE.getScrollPositions()[1]);
+    }
+
+    @Test
+    public void handleFavoriteClick_WhenMovieIsNotFavorited_ShouldAddToFavorites() {
+
+        movieDetailPresenter.handleFavoriteQueryComplete(null);
+        movieDetailPresenter.handleFavoriteClick();
+
+
+        verify(movieRepository).addMovieToFavorites(any(Movie.class), any());
+    }
+
+    @Test
+    public void handleFavoriteSnackbarClick_WhenMovieIsNotFavorited_ShouldAddToFavorites() {
+
+        movieDetailPresenter.handleFavoriteQueryComplete(null);
+        movieDetailPresenter.handleFavoriteSnackbarClick();
+
+
+        verify(movieRepository).addMovieToFavorites(any(Movie.class), any());
+    }
+
+
+    @Test
+    public void handleBackdropPlayButtonClick_WhenVideosAvailable_ShouldShowVideoUi() {
+        when(movieRepository.getMovieDetails(MOVIE.getId().toString())).thenReturn(Single.just(MOVIE_DETAILS));
+
+        movieDetailPresenter.loadMovieDetails();
+        movieDetailPresenter.handleBackdropPlayButtonClick();
+
+
+        verify(movieDetailView).showVideoUi(MOVIE_DETAILS.getVideos().getResults().get(0).getKey());
+    }
+
+    @Test
+    public void handleNetworkConnected_WhenNetworkError_ShouldLoadMovieDetailsAgain() {
+        when(movieRepository.getMovieDetails(MOVIE.getId().toString())).thenReturn(Single.error(new Throwable("network error")));
+
+        movieDetailPresenter.loadMovieDetails();
+        movieDetailPresenter.handleNetworkConnected();
+
+        verify(movieRepository, times(2)).getMovieDetails(MOVIE.getId().toString());
+    }
+
+    @Test
+    public void handleVideoItemClick_ShouldShowVideoUi() {
+        Video video = new Video();
+        video.setKey("key");
+
+        movieDetailPresenter.handleVideoItemClick(video);
+
+        verify(movieDetailView).showVideoUi(video.getKey());
+    }
+
+    @Test
+    public void handleMovieUnfavorited_WhenValidResult_ShouldUnfillFavoriteIcon() {
+        movieDetailPresenter.handleMovieUnfavorited(1);
+
+        verify(movieDetailView).fillFavoriteIcon(false);
+    }
+
+    @Test
+    public void handleMovieUnfavorited_WhenNotFromSnackbar_ShouldDisplayFavoriteSnackbar() {
+        movieDetailPresenter.handleMovieUnfavorited(1);
+
+        verify(movieDetailView).displayFavoriteSnackbar(anyBoolean());
+    }
 
 }
