@@ -129,12 +129,6 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
         if(mNetworkChangeBroadcastReceiver != null && getContext() != null) {
             getContext().unregisterReceiver(mNetworkChangeBroadcastReceiver);
         }
-
-
-        //TODO: SEE IF THIS TRULY FIXED THE CONTENT OBSERVER LEAK
-//        if(mFilterType.equals(FAVORITES)){
-//            mPresenter.unsubscribe();
-//        }
     }
 
     @Override
