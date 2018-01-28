@@ -1,5 +1,7 @@
 package com.codertal.moviehub.features.movies;
 
+import android.support.test.espresso.idling.CountingIdlingResource;
+
 import com.codertal.moviehub.data.movies.model.Movie;
 import com.codertal.moviehub.data.movies.MovieRepository;
 import com.codertal.moviehub.data.movies.model.MoviesResponse;
@@ -46,7 +48,7 @@ public class MoviesPresenterTest {
 
     @Before
     public void setUp() {
-        moviesPresenter = new MoviesPresenter(moviesView, movieRepository, POPULAR);
+        moviesPresenter = new MoviesPresenter(moviesView, movieRepository, POPULAR, null);
 
         MANY_MOVIES = new MoviesResponse();
         MANY_MOVIES.setResults(Arrays.asList(new Movie(), new Movie(), new Movie()));

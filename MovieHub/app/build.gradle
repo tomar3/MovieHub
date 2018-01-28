@@ -16,6 +16,8 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
+    flavorDimensions "default"
+
     buildTypes {
         release {
             minifyEnabled false
@@ -27,11 +29,20 @@ android {
         it.buildConfigField 'String', 'MOVIE_DB_API_KEY', movieDB_API_KEY
     }
 
+    productFlavors {
+        prod {
+
+        }
+        mock {
+            applicationIdSuffix ".mock"
+        }
+    }
 
     project.ext {
         butterknifeVersion = "8.8.1"
         daggerVersion = "2.14.1"
         dartVersion = "2.0.3"
+        espressoVersion = "3.0.1"
         glideVersion = "4.4.0"
         leakcanaryVersion = "1.5.4"
         retrofitVersion = "2.3.0"
@@ -41,9 +52,10 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:$project.espressoVersion"
+    androidTestImplementation "com.android.support.test.espresso:espresso-contrib:$project.espressoVersion"
+    implementation "com.android.support.test.espresso:espresso-idling-resource:$project.espressoVersion"
+
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.13.0'
 

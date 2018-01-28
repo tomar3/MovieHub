@@ -3,9 +3,11 @@ package com.codertal.moviehub.data.movies.local;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import com.codertal.moviehub.BuildConfig;
+
 public class MovieContract {
 
-    public static final String AUTHORITY = "com.codertal.moviehub";
+    public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".provider";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
     public static final String PATH_FAV_MOVIES = "favMovies";
