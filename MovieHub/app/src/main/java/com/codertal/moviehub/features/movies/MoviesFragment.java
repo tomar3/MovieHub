@@ -8,6 +8,8 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,13 +19,13 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.codertal.moviehub.R;
 import com.codertal.moviehub.base.StatefulView;
 import com.codertal.moviehub.base.adapter.BaseRecyclerViewAdapter;
-import com.codertal.moviehub.features.moviedetail.Henson;
-import com.codertal.moviehub.data.movies.model.Movie;
-import com.codertal.moviehub.R;
-import com.codertal.moviehub.features.movies.adapter.MovieListAdapter;
 import com.codertal.moviehub.data.movies.MovieRepository;
+import com.codertal.moviehub.data.movies.model.Movie;
+import com.codertal.moviehub.features.moviedetail.Henson;
+import com.codertal.moviehub.features.movies.adapter.MovieListAdapter;
 import com.codertal.moviehub.features.movies.receiver.NetworkChangeBroadcastReceiver;
 
 import java.util.List;
@@ -55,6 +57,9 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
 
     @Inject
     MovieRepository mMovieRepository;
+
+    @Nullable
+    private CountingIdlingResource mIdlingResource;
 
     public static final String SORT_TYPE = "SORT_TYPE";
     private static final String SCROLL_POSITION = "SCROLL_POSITION";
@@ -103,7 +108,7 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
             throw new IllegalArgumentException("Filter type cannot be null");
         }
 
-        mPresenter = new MoviesPresenter(this, mMovieRepository, filterType);
+        mPresenter = new MoviesPresenter(this, mMovieRepository, filterType, getIdlingResource());
 
         mPresenter.loadMovies();
 
@@ -224,6 +229,15 @@ public class MoviesFragment extends Fragment implements MoviesContract.View,
     @Override
     public void onNetworkConnected() {
         mPresenter.handleNetworkConnected();
+    }
+
+    @VisibleForTesting
+    @NonNull
+    public CountingIdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new CountingIdlingResource("Network_Call");
+        }
+        return mIdlingResource;
     }
 
     private void displayResults(boolean success, String errorType){

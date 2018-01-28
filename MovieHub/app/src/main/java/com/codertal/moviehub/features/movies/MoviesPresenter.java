@@ -3,6 +3,7 @@ package com.codertal.moviehub.features.movies;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.test.espresso.idling.CountingIdlingResource;
 
 import com.codertal.moviehub.data.movies.model.Movie;
 import com.codertal.moviehub.data.movies.MovieRepository;
@@ -31,13 +32,16 @@ public class MoviesPresenter extends MoviesContract.Presenter implements Favorit
     private MoviesContract.State mState;
     private String mFilterType;
     private boolean mMoviesDisplayed;
+    private CountingIdlingResource mIdlingResource;
 
     public MoviesPresenter(@NonNull MoviesContract.View moviesView,
                            @NonNull MovieRepository movieRepository,
-                           @NonNull String filterType) {
+                           @NonNull String filterType,
+                           CountingIdlingResource idlingResource) {
         mMoviesView = moviesView;
         mMovieRepository = movieRepository;
         mFilterType = filterType;
+        mIdlingResource = idlingResource;
         mMoviesDisplayed = false;
     }
 
@@ -62,6 +66,7 @@ public class MoviesPresenter extends MoviesContract.Presenter implements Favorit
 
     @Override
     public void loadMovies() {
+        //mIdlingResource.increment();
 
         mMoviesView.displayLoadingIndicator(true);
 
@@ -103,6 +108,8 @@ public class MoviesPresenter extends MoviesContract.Presenter implements Favorit
                                 }
                                 mMoviesDisplayed = true;
                             }
+
+                            //mIdlingResource.decrement();
                         }
 
                         @Override
@@ -110,6 +117,8 @@ public class MoviesPresenter extends MoviesContract.Presenter implements Favorit
                             Timber.e(error);
 
                             mMoviesView.displayLoadingError();
+
+                            //mIdlingResource.decrement();
                         }
                     }));
         }
@@ -145,6 +154,8 @@ public class MoviesPresenter extends MoviesContract.Presenter implements Favorit
         }
 
         cursor.close();
+
+        //mIdlingResource.decrement();
     }
 
     //Used for unit testing

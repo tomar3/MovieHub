@@ -27,7 +27,7 @@
 
         <provider
             android:name=".data.movies.local.MovieContentProvider"
-            android:authorities="com.codertal.moviehub"
+            android:authorities="${applicationId}.provider"
             android:exported="false"/>
     </application>
 
